@@ -1,0 +1,680 @@
+[
+  {
+    "id": 1,
+    "name": "Pictet-Gams",
+    "smarts": "[$(C([CH2,CH3])),CH:10](=[O:11])-[NH+0:9]-[C$([CH](N)(C)(C)),C$([CH2](N)(C)):8]-[C$([C](c)(C)(C)),C$([CH](c)(C)):7]([O$(OC),OH])-[c:6]1[cH:1][c:2][c:3][c:4][c:5]1>>[c:10]-1[n:9][c:8][c:7][c:6]2[c:5][c:4][c:3][c:2][c:1]-12",
+    "source": "Button"
+  },
+  {
+    "id": 2,
+    "name": "Pictet-Spengler-6-membered-ring",
+    "smarts": "[NH3+,NH2]-[C$(C(N)(C)(C)(C)),C$([CH](N)(C)(C)),C$([CH2](N)(C)):8]-[C$(C(c)(C)(C)(C)),C$([CH](c)(C)(C)),C$([CH2](c)(C)):7]-[c:6]1[c:1][c:2][c:3][c:4][cH:5]1.[CH:10](-[CX4:12])=[O:11]>>[c,C:12]-[CH:10]-1-[N]-[C:8]-[C:7]-[c:6]2[c:1][c:2][c:3][c:4][c:5]-12",
+    "source": "Button",
+    "retro_smarts": "[c,C:12][CH:10]1[NH:9][C:8][C:7][c:6]2[c:1][c:2][c:3][c:4][c:5]12>>[c,C:12][CH:10]=O.[NH2:9][C:8][C:7][c:6]1[c:1][c:2][c:3][c:4][c:5]1"
+  },
+  {
+    "id": 3,
+    "name": "Pictet-Spengler-5-membered-ring",
+    "smarts": "[NH3+,NH2]-[C$(C(N)(C)(C)(C)),C$([CH](N)(C)(C)),C$([CH2](N)(C)):8]-[C$(C(c)(C)(C)(C)),C$([CH](c)(C)(C)),C$([CH2](c)(C)):7]-[c:6]1[c:1][c:2][nH:3][cH:5]1.[CH:10](-[CX4:12])=[O:11]>>[c,C:12]-[CH:10]-1-[N]-[C:8]-[C:7]-[c:6]2[c:1][c:2][nH:3][c:5]-12",
+    "source": "Button",
+    "retro_smarts": "[c,C:12][CH:10]1[NH:9][C:8][C:7][c:6]2[c:1][c:2][nH:3][c:5]12>>[c,C:12][CH:10]=O.[NH2:9][C:8][C:7][c:6]1[c:1][c:2][nH:3][c:5]1"
+  },
+  {
+    "id": 4,
+    "name": "Bischler-Indole",
+    "smarts": "[NH2,NH3+1:8]-[c:5]1[cH:4][c:3][c:2][c:1][c:6]1.[Br:18][C$([CH2](C)(Br)),C$([CH](C)(C)(Br)):17]-[C:15](=[O:16])-[c:10]1[c:11][c:12][c:13][c:14][c:9]1>>[c:13]1[c:12][c:11][c:10]([c:9][c:14]1)-[c:15]1[c:17][c:4]2[c:3][c:2][c:1][c:6][c:5]2[nH+0:8]1",
+    "source": "Button"
+  },
+  {
+    "id": 5,
+    "name": "Benzimidazol_formation",
+    "smarts": "[OH,O-]-[C$(C([CX4])),C$([CH]):2]=[O:3].[NH2,NH3+:12]-[c:9]1[c:8][c:7][c:6][c:5][c:10]1-[N$([NH](c)([CX4])),N$([NH2,NH3+1](c)):11]>>[c:2]1[n+0:12][c:9]2[c:8][c:7][c:6][c:5][c:10]2[n:11]1",
+    "source": "Button"
+  },
+  {
+    "id": 6,
+    "name": "Aminothiazol_formation",
+    "smarts": "[C$([CH]([Br,Cl,I])(C)([CX4])),C$([CH2]([Br,Cl,I])(c)),C$([CH2]([Br,Cl,I])(C)):1](-[Br,Cl,I:3])-[C$(C(C)([c,C])),C$([CH](C)):2]=[O:4]>[NH2:8]-[C:7](-[NH2:9])=[S:10]>[NH2+0:8]-[c:7]1[n:9][c:1][c:2][s:10]1",
+    "source": "Button"
+  },
+  {
+    "id": 7,
+    "name": "Benzoxazol_formation",
+    "smarts": "[OH,O-]-[C$(C([CX4])),C$([CH]):2]=[O:3].[NH2,NH3+:12]-[c:9]1[c:8][c:7][c:6][c:5][c:10]1-[OH:11]>>[c:2]1[o+0:12][c:9]2[c:8][c:7][c:6][c:5][c:10]2[n:11]1",
+    "source": "Button"
+  },
+  {
+    "id": 8,
+    "name": "Benzothiazol_formation",
+    "smarts": "[OH,O-]-[C$(C([CX4])),C$([CH]):2]=[O:3].[NH2,NH3+:12]-[c:9]1[c:8][c:7][c:6][c:5][c:10]1-[SH:11]>>[c:2]1[s+0:12][c:9]2[c:8][c:7][c:6][c:5][c:10]2[n:11]1",
+    "source": "Button"
+  },
+  {
+    "id": 9,
+    "name": "Rap-Stoermer",
+    "smarts": "[Cl:1][CH2:2]-[C$([CH](C)),C$(C(C)(C)):3]=[O:4].[OH:12]-[c:11]1[c:6][c:7][c:8][c:9][c:10]1-[CH:13]=[O:14]>>[C:3](=[O:4])-[c:2]1[c:13][c:10]2[c:9][c:8][c:7][c:6][c:11]2[o:12]1",
+    "source": "Button"
+  },
+  {
+    "id": 10,
+    "name": "Niementowski",
+    "smarts": "[N$([NH](C)([CX4])),N$([NH2,NH3+1](C)):2]-[C$(C(N)(C)),C$([CH](N)):1]=[O:3].[NH2,NH3+1:13]-[c:8]1[c:7][c:6][c:5][c:4][c:9]1-[C:10](-[OH,O-:12])=[O:11]>>[O:11]=[c:10]-1[n:2][c:1][n:13][c:8]2[c:7][c:6][c:5][c:4][c:9]-12",
+    "source": "Button"
+  },
+  {
+    "id": 11,
+    "name": "Quinazolinone_formation",
+    "smarts": "[NH2,NH3+]-[C$([CX4](N)([c,C])([c,C])([c,C])),C$([CH](N)([c,C])([c,C])),C$([CH2](N)([c,C])),C$([CH3](N)):2].[NH2:12]-[c:7]1[c:6][c:5][c:4][c:3][c:8]1-[C:9](-[OH,O-:11])=[O:10]>>[C:2]-[n+0]-1[c:13][n:12][c:7]2[c:6][c:5][c:4][c:3][c:8]2[c:9]-1=[O:10]",
+    "source": "Button"
+  },
+  {
+    "id": 12,
+    "name": "Chinonlin-2-one_Intramol",
+    "smarts": "[C$(C(C)(=O)([CX4])),C$([CH](C)(=O)):10](=[O:13])-[C$([CH]([CX4])),C$([CH2]):9]-[C:8](=[O:12])-[NH:7]-[c:5]1[cH:6][c:1][c:2][c:3][c:4]1>>[c:10]-1[c:9][c:8](-[OH:12])-[n:7]-[c:5]2[c:4][c:3][c:2][c:1][c:6]-12",
+    "source": "Button"
+  },
+  {
+    "id": 13,
+    "name": "Tetrazol_formation",
+    "smarts": "[C$(C(#N)([CX4])),C$([CH](#N)):1]#[N:2]>>[c$(c(n)(n)([CX4])),c$([cH](n)(n)):1]-1[n:2][nH:4][n:6][n:5]-1",
+    "source": "Button"
+  },
+  {
+    "id": 14,
+    "name": "Tetrahydro-Indole_formation",
+    "smarts": "[N$([NH2]([CX4])),N$([NH3+1]([CX4])):1].[O:5]-[C$([CH]([CX4])(C)(O)),C$([CH2]([CX4])(O)):3][C$(C([CX4])(=O)([CX4])),C$([CH]([CX4])(=O)):4]=[O:6]>[O:15]=[C:9]-1-[CH2:10]-[CH2:11]-[CH2:12]-[CH2:13]-[CH2:14]-1>[c:4]1[c:3][n+0:1][c:10]2-[C:11]-[C:12]-[C:13]-[C:14]-[c:9]12",
+    "source": "Button"
+  },
+  {
+    "id": 15,
+    "name": "3-nitrile_pyridine",
+    "smarts": "[C$(C(=O)([CX4])([CX4])),C$([CH](=O)([CX4])):2](=[O:6])-[C$([CH]([CX4])),C$([CH2]):3]-[C$(C(=O)([CX4])([CX4])),C$([CH](=O)([CX4])):4]=[O:7].[NH2:8]-[C:9](=[O:10])-[CH2:11][C:12]#[N:13]>>[OH:10]-[c:9]1[n:8][c:4][c:3][c:2][c:11]1[C:12]#[N:13]",
+    "source": "Button"
+  },
+  {
+    "id": 16,
+    "name": "Triazole_formation",
+    "smarts": "[C$(C(#N)([CX4])):2]#[N:3].[NH2,NH3+1:4]-[NH:5]-[C$(C(N)(=O)([CX4])),C$([CH](N)(=O)):6]=[O:7]>>[c:6]-1[n:5][c:2][n:3][n:9]-1",
+    "source": "Button"
+  },
+  {
+    "id": 17,
+    "name": "Huisgen_1-3_Dipolar_Cycloaddition",
+    "smarts": "[C$(C(#C)([CX4])):2]#[C$(C(#C)([CX4])):1].[N$(N(~N)([CX4])):5]~[N]~[N]>>[c:2]1[c:1][n:5][n][n]1",
+    "source": "Button"
+  },
+  {
+    "id": 18,
+    "name": "Huisgen_1_3_Dipolar_Cycloaddition_double_bond",
+    "smarts": "[C$(C(=C)([CX4])):2]=[C$(C(=C)([CX4])):1].[N$(N(~N)([CX4])):5]~[N]~[N]>>[C:2]1[C:1][N:5][N]=[N]1",
+    "source": "Button"
+  },
+  {
+    "id": 19,
+    "name": "Diels-Alder",
+    "smarts": "[C$(C(=C)([CX4,OX2,NX3])([CX4,OX2,NX3])),C$([CH](=C)([CX4,OX2,NX3])),C$([CH2](=C)):1]=[C$(C(=C)([CX4,OX2,NX3])([CX4,OX2,NX3])),C$([CH](=C)([CX4,OX2,NX3])),C$([CH2](=C)):2].[C$(C(=C)([CX4,OX2,NX3])([CX4,OX2,NX3])),C$([CH](=C)([CX4,OX2,NX3])),C$([CH2](=C)):3]=[C$([C](=C)(C)([CX4,OX2,NX3])),C$([CH](=C)(C)):4]-[C$([C](=C)(C)([CX4,OX2,NX3])),C$([CH](=C)(C)):5]=[C$(C(=C)([CX4,OX2,NX3])([CX4,OX2,NX3])),C$([CH](=C)([CX4,OX2,NX3])),C$([CH2](=C)):6]>>[C:1]1[C:2][C:3][C:4]=[C:5][C:6]1",
+    "source": "Button"
+  },
+  {
+    "id": 20,
+    "name": "Diels-Alder-Alkyne",
+    "smarts": "[C$(C(#C)([CX4,OX2,NX3])),C$([CH](#C)):1]#[C$(C(#C)([CX4,OX2,NX3])),C$([CH](#C)):2].[C$(C(=C)([CX4,OX2,NX3])([CX4,OX2,NX3])),C$([CH](=C)([CX4,OX2,NX3])),C$([CH2](=C)):3]=[C$([C](=C)(C)([CX4,OX2,NX3])),C$([CH](=C)(C)):4]-[C$([C](=C)(C)([CX4,OX2,NX3])),C$([CH](=C)(C)):5]=[C$(C(=C)([CX4,OX2,NX3])([CX4,OX2,NX3])),C$([CH](=C)([CX4,OX2,NX3])),C$([CH2](=C)):6]>>[C:1]1=[C:2][C:3][C:4]=[C:5][C:6]1",
+    "source": "Button"
+  },
+  {
+    "id": 21,
+    "name": "Spiro-piperidine_formation",
+    "smarts": "[N$(N([CX4])),N$([NH]):5]-1-[C$(C(C)(N)([CX4])([CX4])),C$([CH](C)(N)([CX4])),C$([CH2](C)(N)):4]-[C$(C(C)(C)([CX4])([CX4])),C$([CH](C)(C)([CX4])),C$([CH2](C)(C)):3]-[C:2](=[O:7])-[C$(C(C)(C)([CX4])([CX4])),C$([CH](C)(C)([CX4])),C$([CH2](C)(C)):1]-[C$(C(C)(N)([CX4])([CX4])),C$([CH](C)(N)([CX4])),C$([CH2](C)(N)):6]-1.[C$([CH](C)([CX4])([CX4])),C$([CH2](C)([CX4])),C$([CH3]):18]-[C:16](=[O:17])-[c:14]1[c:9][c:10][c:11][c:12][c:13]1-[OH:15]>>[N:5]-1-[C:4]-[C:3][C:2]2([C:1]-[C:6]-1)[C:18]-[C:16](=[O:17])-[c:14]1[c:9][c:10][c:11][c:12][c:13]1-[O:15]2",
+    "source": "Button"
+  },
+  {
+    "id": 22,
+    "name": "Pyrazol_formation",
+    "smarts": "[NH2,NH3+:3]-[N$([NH](N)([CX4])):2].[C$([CH](C)(C)([CX4])),C$([CH2](C)(C)):6](-[C$(C(=O)(C)([CX4])),C$([CH](=O)(C)):5]=[O:9])-[C$(C(=O)(C)([CX4])),C$([CH](=O)(C)):7]=[O:10]>>[c:7]1[n:3][n:2][c:5][c:6]1",
+    "source": "Button"
+  },
+  {
+    "id": 23,
+    "name": "Phthalazinone",
+    "smarts": "[NH2,NH3+1:2]-[N$([NH](N)([CX4])):1].[OH,O-:12]-[C:10](=[O:11])-[c:5]1[c:4][c:9][c:8][c:7][c:6]1-[C$(C(c)(=O)([CX4])),C$([CH](c)(=O)):13]=[O:14]>>[N:1]-1-[N:2]=[C:13][c:6]2[c:7][c:8][c:9][c:4][c:5]2-[C:10]-1=[O:11]",
+    "source": "Button"
+  },
+  {
+    "id": 24,
+    "name": "Paal-Knorr-pyrole_formation",
+    "smarts": "[C$(C(=O)(C)([CX4])),C$(C[H](=O)(C)):1](=[O:2])-[$([CH](C)(C)([CX4])),$([CH2](C)(C)):3]-[$([CH](C)(C)([CX4])),$([CH2](C)(C)):4]-[C$(C(=O)(C)([CX4])),C$(C[H](=O)(C)):5]=[O:6].[N$([NH2,NH3+1]([CX4])):7]>>[c:5]1[c:4][c:3][c:1][n+0:7]1",
+    "source": "Button"
+  },
+  {
+    "id": 25,
+    "name": "Triaryl-imidazol-1_2-diketone",
+    "smarts": "[CH:7](=[O:8])-[c:1]1[c:2][c:3][c:4][c:5][c:6]1.[O:24]=[C:23](-[C:22](=[O:25])-[c:15]1[c:10][c:11][c:12][c:13][c:14]1)-[c:20]1[c:21][c:16][c:17][c:18][c:19]1>[NH4].[O-]C(=O)C>[nH:27]-1[c:7]([n:26][c:23]([c:22]-1[c:15]1[c:10][c:11][c:12][c:13][c:14]1)-[c:20]1[c:21][c:16][c:17][c:18][c:19]1)-[c:1]1[c:2][c:3][c:4][c:5][c:6]1",
+    "source": "Button"
+  },
+  {
+    "id": 26,
+    "name": "Triaryl-imidazol-alpha_hydroxy_ketone",
+    "smarts": "[CH:7](=[O:8])-[c:1]1[c:2][c:3][c:4][c:5][c:6]1.[O:24]=[C:23](-[CH:22](-[OH:25])-[c:15]1[c:10][c:11][c:12][c:13][c:14]1)-[c:20]1[c:21][c:16][c:17][c:18][c:19]1>[NH4].[O-]C(=O)C>[nH:27]-1[c:7]([n:26][c:23]([c:22]-1[c:15]1[c:10][c:11][c:12][c:13][c:14]1)-[c:20]1[c:21][c:16][c:17][c:18][c:19]1)-[c:1]1[c:2][c:3][c:4][c:5][c:6]1",
+    "source": "Button"
+  },
+  {
+    "id": 27,
+    "name": "Fischer_indole",
+    "smarts": "[C$([CH2](C)([CX4])),C$([CH3](C)):4]-[C$(C([CX4])(=O)([CX4])),C$([CH]([CX4])(=O)):3]=[O:1].[NH2:6]-[NH:7]-[c:9]1[c:10][c:11][c:12][c:13][cH:8]1>>[c:3]1[nH:7][c:9]2[c:10][c:11][c:12][c:13][c:8]2[c:4]1",
+    "source": "Button"
+  },
+  {
+    "id": 28,
+    "name": "Friedlaender_chinoline_formation",
+    "smarts": "[C$([CH2](C)([CX4])),C$([CH3](C)):4]-[C$(C([CX4])(=O)([CX4])),C$([CH]([CX4])(=O)):2]=[O:1].[NH2:12]-[c:10]1[c:9][c:8][c:7][c:6][c:11]1-[C$(C(c)(=O)([CX4])),C$([CH](c)(=O)):13]=[O:14]>>[c:2]1[c:13][c:11]2[c:6][c:7][c:8][c:9][c:10]2[n:12][c:4]1",
+    "source": "Button"
+  },
+  {
+    "id": 29,
+    "name": "Peachmann_coumarine",
+    "smarts": "[OH:7]-[c:6]1[cH:1][c:2][c:3][c:4][c:5]1.[O$(O(C)([CX4])):12]-[C:11](=[O:15])-[C$([CH](C)(C)([CX4])),C$([CH2](C)(C)):10]-[C:8]=[O:16]>>[C:8]-1=[C:10]-[C:11](=[O:15])-[O]-[c:6]2[c:5][c:4][c:3][c:2][c:1]-12",
+    "source": "Button"
+  },
+  {
+    "id": 30,
+    "name": "Benzofuran_formation",
+    "smarts": "[C$(C(#C)([CX4])),C$([CH](#C)):2]#[CH:1].[OH:11]-[c:8]1[c:7][c:6][c:5][c:4][c:9]1[I:10]>>[c:2]1[c:1][c:9]2[c:4][c:5][c:6][c:7][c:8]2[o:11]1",
+    "source": "Button"
+  },
+  {
+    "id": 31,
+    "name": "Imidazol-Acetamid",
+    "smarts": "[C$(C(=O)(N)([CX4])),C$([CH](=O)(N)):5](=[O:6])-[NH:4]-[C:2](-[NH2:1])=[NH:3].[Br:12][C$([CH](Br)(C)([CX4])),C$([CH2](Br)(C)):9]-[C$(C(=O)(C)([CX4])),C$([CH](=O)(C)):8]=[O:10]>>[C:5](=[O:6])-[NH:4]-[c:2]1[n:3][c:9][c:8][nH:1]-1",
+    "source": "Button"
+  },
+  {
+    "id": 32,
+    "name": "Dieckmann_5-ring",
+    "smarts": "[O$(O(C)([CX4])):8][C:7](=[O:9])[CH:6][C:5][C:4][C:3][C:2]([O$(O(C)([CX4])):10])=[O:1]>>[O:8][C:7](=[O:9])[C:6]1[C:5][C:4][C:3][C:2]1=[O:1]",
+    "source": "Button"
+  },
+  {
+    "id": 33,
+    "name": "Dieckmann_6-ring",
+    "smarts": "[O$(O(C)([CX4])):8][C:7](=[O:9])[CH:6][C:5][C:11][C:4][C:3][C:2]([O$(O(C)([CX4])):10])=[O:1]>>[O:8][C:7](=[O:9])[C:6]1[C:5][C:11][C:4][C:3][C:2]1=[O:1]",
+    "source": "Button"
+  },
+  {
+    "id": 34,
+    "name": "Flavone_formation",
+    "smarts": "[Cl:9][C:7](=[O:8])-[c:3]1[c:2][c:1][c:6][c:5][c:4]1.[C$([CH2](C)([CX4])),C$([CH3](C)):18]-[C:16](=[O:17])-[c:14]1[c:13][c:12][c:11][c:10][c:15]1-[OH:19]>>[O:17]=[C:16]-1-[C:18]=[C:7](-[O:8]-[c:15]2[c:10][c:11][c:12][c:13][c:14]-12)-[c:3]1[c:2][c:1][c:6][c:5][c:4]1",
+    "source": "Button"
+  },
+  {
+    "id": 35,
+    "name": "Oxadiazole_formation",
+    "smarts": "[OH,O-:3]-[C$(C(=O)(O)[CX4]),C$([CH](=O)(O)):2]=[O:1].[N:12]#[C:11][c:10]1[c:5][c:6][c:7][c:8][c:9]1>>[c:2]1[n:12][c:11]([n:13][o:1]1)-[c:10]1[c:5][c:6][c:7][c:8][c:9]1 ",
+    "source": "Button"
+  },
+  {
+    "id": 36,
+    "name": "Michael_addition",
+    "smarts": "[C$(C(C)(=O)([CX4,OX2&H0])),C$(C(C)(#N)),N$([N+1](C)(=O)([O-1])):1][C$([CH]([C,N])([C,N])([CX4])),C$([CH2]([C,N])([C,N])):2][C$(C(C)(=O)([CX4,OX2&H0])),C$(C(C)(#N)),N$([N+1](C)(=O)([O-1])):3].[C$(C(C)(#N)),C$(C(C)([CX4,OX2&H0])([CX4,OX2&H0])([OX2&H0])),C$([CH](C)([CX4,OX2&H0])([OX2&H0])),C$([CH2](C)([OX2&H0])),C$(C(C)(=O)([OX2&H0])):6][CH:5]=[C$(C(=C)([CX4])([CX4])),C$([CH](=C)([CX4])),C$([CH2](=C)):4]>>[C:6][C:5][C:4][C:2]([C:1])[C:3]",
+    "source": "Button"
+  },
+  {
+    "id": 37,
+    "name": "Cross_Claissen",
+    "smarts": "[C$([C](O)([CX4])([CX4])([CX4])),C$([CH](O)([CX4])([CX4])),C$([CH2](O)([CX4])):4]-[O:3]-[C$(C(=O)([CX4])),C$([CH](=O)):2]=[O:5].[C$([CH](C)([CX4])([CX4])),C$([CH2](C)([CX4])),C$([CH3](C)):7]-[C$(C(=O)([CX4])),C$([CH](=O)):8]=[O:9]>>[C:7](-[C:2]=[O:5])-[C:8]=[O:9]",
+    "source": "Button",
+    "retro_smarts": "[C:2](=O)-[CX4:7]-[C:8](=O)>>[C:2](=O)OCC.[CX4:7][C:8](=O)"
+  },
+  {
+    "id": 38,
+    "name": "Williamson_ether",
+    "smarts": "[Br,Cl,I:1][C$(C([Br,Cl,I])([CX4,c])([CX4,c])([CX4,c])),C$([CH]([Br,Cl,I])([CX4,c])([CX4,c])),C$([CH2]([Br,Cl,I])([CX4,c])),C$([CH3]([Br,Cl,I])),c$(c([Br,Cl,I])([c,n,o])([c,n,o])):2].[OH:3][C$(C(O)([CX4,c])([CX4,c])([CX4,c])),C$([CH](O)([CX4,c])([CX4,c])),C$([CH2](O)([CX4,c])),C$([CH3]([OH])),c$(c([OH])([c,n,o])([c,n,o])):4]>>[C,c:2][O:3][C,c:4]",
+    "source": "Button"
+  },
+  {
+    "id": 39,
+    "name": "Ester_formation",
+    "smarts": "[Cl,OH,O-:3][C$(C(=O)([CX4,c])),C$([CH](=O)):2]=[O:4].[O$([OH]([CX4,c])),O$([OH]([CX4,c])([CX4,c])),S$([SH]([CX4,c])),S$([SH]([CX4,c])([CX4,c])):6]>>[*:6]-[C:2]=[O:4]",
+    "source": "Button"
+  },
+  {
+    "id": 40,
+    "name": "Reductive_amination-Ketone",
+    "smarts": "[C$(C(=O)([CX4,c])([CX4,c])),C$([CH](=O)([CX4,c])):1]=[O:2].[N$([NH2,NH3+1]([CX4,c])),N$([NH]([CX4,c])([CX4,c])):3]>>[N+0:3][C:1]",
+    "source": "Button"
+  },
+  {
+    "id": 41,
+    "name": "Suzuki_coupling",
+    "smarts": "[Br:1][c$(c(Br)),n$(n(Br)),o$(o(Br)),C$([CH](Br)(=C)):2].[C$(C(B)([CX4])([CX4])([CX4])),C$([CH](B)([CX4])([CX4])),C$([CH2](B)([CX4])),C$([CH2](B)),C$(C(B)(=C)),c$(c(B)),o$(o(B)),n$(n(B)):3][B$(B([C,c,n,o])([OH,$(OC)])([OH,$(OC)])),B$([B-1]([C,c,n,o])(N)([OH,$(OC)])([OH,$(OC)])):4]>>[C,c,n,o:2][C,c,n,o:3]",
+    "source": "Button",
+    "retro_smarts": "[c:1]-[c:2]>>[c:1][Br].[c:2]B(O)O"
+  },
+  {
+    "id": 42,
+    "name": "Piperidine_and_Indole",
+    "smarts": "[cH:9]1[c:8][n:7][c:5]2[c:4][c:3][c:2][c:1][c:6]12.[N:17]-1-[CX4:16]-[CH:15]-[C:14](=[O:20])-[CX4:19]-[CX4:18]-1>>[N:17]-1-[C:18]-[C:19]-[C:14](=[C:15]-[C:16]-1)-[c:9]1[c:8][n:7][c:5]2[c:4][c:3][c:2][c:1][c:6]12",
+    "source": "Button"
+  },
+  {
+    "id": 43,
+    "name": "Negishi",
+    "smarts": "[Br,I:1][C$(C([Br,I])([CX4])([CX4])([CX4])),C$([CH]([Br,I])([CX4])([CX4])),C$([CH2]([Br,I])([CX4])),C$([CH3]([Br,I])),C$([C]([Br,I])(=C)([CX4])),C$([CH]([Br,I])(=C)),C$(C([Br,I])(#C)),c$(c([Br,I])):2].[Br,I:3][C$(C([Br,I])([CX4])([CX4])([CX4])),C$([CH]([Br,I])([CX4])([CX4])),C$([CH2]([Br,I])([CX4])),C$([CH3]([Br,I])),C$([C]([Br,I])(=C)([CX4])),C$([CH]([Br,I])(=C)),C$(C([Br,I])(#C)),c$(c([Br,I])):4]>>[C,c:2][C,c:4]",
+    "source": "Button",
+    "retro_smarts": "[c:1]-[CX4:2]>>[c:1][Br].[CX4:2][Br]"
+  },
+  {
+    "id": 44,
+    "name": "Mitsunobu_imide",
+    "smarts": "[C$(C(C)([CX4])([CX4])([CX4])),C$([CH](C)([CX4])([CX4])),C$([CH2](C)([CX4])),C$([CH3](C)):1][C:2](=[O:3])-[NH:4]-[C:5]([C$(C(C)([CX4])([CX4])([CX4])),C$([CH](C)([CX4])([CX4])),C$([CH2](C)([CX4])),C$([CH3](C)):10])=[O:7].[OH:11]-[C$(C(O)([CX4])([CX4])([CX4])),C$([CH](O)([CX4])([CX4])),C$([CH2](O)([CX4])),C$([CH3](O)):9]>>[C:9][N+0:4](-[C:2]([C:1])=[O:3])-[C:5]([C:10])=[O:7]",
+    "source": "Button"
+  },
+  {
+    "id": 45,
+    "name": "Mitsunobu_carboxlyic_acid",
+    "smarts": "[OH,O-]-[C$(C(=O)(O)([CX4,c])):2]=[O:3].[OH:8]-[C$([CH](O)([CX4,c])([CX4,c])),C$([CH2](O)([CX4,c])),C$([CH3](O)):6]>>[C:6][O]-[C:2]=[O:3]",
+    "source": "Button",
+    "retro_smarts": "[CX4:6]-[O]-[CX3:2](=[O:3])>>[CX4:6][OH].[CX3:2](=[O:3])[OH]"
+  },
+  {
+    "id": 46,
+    "name": "Mitsunobu_sulfonic_amide",
+    "smarts": "[OH:1]-[C$([CH](O)([CX4,c])([CX4,c])),C$([CH2](O)([CX4,c])),C$([CH3](O)):3].[N$([NH](S)([CX4])),N$([NH2,NH3+1](S)):9][S$(S(N)([CX4])):6](=[O:7])=[O:8]>>[C:3][N+0:9][S:6](=[O:8])=[O:7]",
+    "source": "Button"
+  },
+  {
+    "id": 47,
+    "name": "Heck",
+    "smarts": "[C$([CH](=C)([CX4])),C$([CH2](=C)):2]=[C$(C(=C)([CX4])([CX4])),C$([CH](=C)([CX4])),C$([CH2](=C)):3].[Br,I:7][C$([CX4]([Br,I])),c$([c]([Br,I])):4]>>[C,c:4][C:2]=[C:3]",
+    "source": "Button",
+    "retro_smarts": "[c:4]-[CH:2]=[C:3]>>[c:4][Br].[CH2:2]=[C:3]"
+  },
+  {
+    "id": 48,
+    "name": "Amide_formation",
+    "smarts": "[Cl,OH,O-:3][C$(C(=O)([CX4,c])),C$([CH](=O)):2]=[O:4].[N$([NH2,NH3+1]([CX4,c])),N$([NH]([CX4,c])([CX4,c])):6]>>[N+0:6]-[C:2]=[O:4]",
+    "source": "Button"
+  },
+  {
+    "id": 49,
+    "name": "Thiolether_formation-Alkene",
+    "smarts": "[C$(C(=C)([CX4])([CX4])),C$([CH](=C)([CX4])),C$([CH2](=C)):1]=[C$(C(=C)([CX4])([CX4])),C$([CH](=C)([CX4])),C$([CH2](=C)):2].[SH:4]-[CX4:5][Br,Cl,I]>>[C:1]-[C:2]-[S:4][C:5]",
+    "source": "Button"
+  },
+  {
+    "id": 50,
+    "name": "Thiolether_formation-Carboxlyic_acid",
+    "smarts": "[C$([C](=O)([CX4])),C$([CH](=O)):2](=[O:1])[OH,Cl,O-:6].[SH:4]-[CX4:5][Br,Cl,I]>>[CH2:2]-[S:4][C:5]",
+    "source": "Button"
+  },
+  {
+    "id": 51,
+    "name": "Ketone_formation",
+    "smarts": "[I:1][C$(C(I)([CX4,c])([CX4,c])([CX4,c])),C$([CH](I)([CX4,c])([CX4,c])),C$([CH2](I)([CX4,c])),C$([CH3](I)):2].[C$(C(=O)([Cl,OH,O-])([CX4,c])),C$([CH]([Cl,OH,O-])(=O)):3](=[O:6])[Cl,OH,O-:5]>>[C:2]-[C:3]=[O:6]",
+    "source": "Button"
+  },
+  {
+    "id": 52,
+    "name": "Sulfonamide_formation",
+    "smarts": "[Cl:5][S$(S(=O)(=O)(Cl)([CX4])):2](=[O:3])=[O:4].[NH2+0,NH3+:6]-[C$(C(N)([CX4,c])([CX4,c])([CX4,c])),C$([CH](N)([CX4,c])([CX4,c])),C$([CH2](N)([CX4,c])),C$([CH3](N)),c$(c(N)):7]>>[C,c:7]-[NH+0:6][S:2](=[O:4])=[O:3]",
+    "source": "Button"
+  },
+  {
+    "id": 53,
+    "name": "Ar-Imidazole_formation",
+    "smarts": "[c:5]1[c:4][nH:3][c:2][n:1]1.[OH,$(OC):13]-[B:12](-[OH,$(OC):14])-[c:6]1[c:7][c:8][c:9][c:10][c:11]1>>[c:4]1[c:5][n:3]([c:2][n:1]1)-[c:6]1[c:7][c:8][c:9][c:10][c:11]1",
+    "source": "Button"
+  },
+  {
+    "id": 54,
+    "name": "Alkyne_alkylation",
+    "smarts": "[*:1][C:2]#[CH:3].[Br,I:4][C$(C([CX4,c])([CX4,c])([CX4,c])),C$([CH]([CX4,c])([CX4,c])),C$([CH2]([CX4,c])),C$([CH3]),c$(c):5]>>[C,c:5][C:3]#[C:2][*:1]",
+    "source": "Button"
+  },
+  {
+    "id": 55,
+    "name": "Alkyne_acylation",
+    "smarts": "[C$(C(C)([CX4])([CX4])([CX4])),C$([CH](C)([CX4])([CX4])),C$([CH2](C)([CX4])),C$([CH3](C)):1][C:2]#[CH:3].[Br,I:4][C$(C(=O)([Br,I])([CX4])),C$([CH](=O)([Br,I])):5]=[O:6]>>[C:1][C:2]#[C:3][C:5]=[O:6]",
+    "source": "Button"
+  },
+  {
+    "id": 56,
+    "name": "FGI_Acyl_chloride",
+    "smarts": "[OH,O-:4]-[C$(C(=O)([OH,O-])([CX4])),C$([CH](=O)([OH,O-])):2]=[O:3]>>[Cl:5][C:2]=[O:3]",
+    "source": "Button"
+  },
+  {
+    "id": 57,
+    "name": "FGI_bromination",
+    "smarts": "[OH:2]-[$([CX4]),c:1]>>[Br:3][C,c:1]",
+    "source": "Button"
+  },
+  {
+    "id": 58,
+    "name": "FGI_chlorination",
+    "smarts": "[OH:2]-[$([CX4]),c:1]>>[Cl:3][C,c:1]",
+    "source": "Button"
+  },
+  {
+    "id": 59,
+    "name": "FGI_sulfonyl_chloride",
+    "smarts": "[OH,O-:3][S$(S([CX4])):2](=[O:4])=[O:5]>>[Cl:6][S:2](=[O:5])=[O:4]",
+    "source": "Button"
+  },
+  {
+    "id": 60,
+    "name": "FGA_alpha_bromination",
+    "smarts": "[OH+0,O-:5]-[C:3](=[O:4])-[C$([CH]([CX4])),C$([CH2]):2]>>[OH+0,O-:5]-[C:3](=[O:4])-[C:2]([Br:6])",
+    "source": "Button"
+  },
+  {
+    "id": 61,
+    "name": "FGA_alpha_chlorination",
+    "smarts": "[OH+0,O-:5]-[C:3](=[O:4])-[C$([CH]([CX4])),C$([CH2]):2]>>[OH+0,O-:5]-[C:3](=[O:4])-[C:2]([Cl:6])",
+    "source": "Button"
+  },
+  {
+    "id": 62,
+    "name": "FGI_Rosenmund-von_Braun",
+    "smarts": "[Cl,I,Br:7][c:1]1[c:2][c:3][c:4][c:5][c:6]1>>[N:9]#[C:8][c:1]1[c:2][c:3][c:4][c:5][c:6]1",
+    "source": "Button"
+  },
+  {
+    "id": 63,
+    "name": "FGI_nitrilation",
+    "smarts": "[OH,NH2,NH3+:3]-[CH2:2]-[C$(C([CX4,c])([CX4,c])([CX4,c])),C$([CH]([CX4,c])([CX4,c])),C$([CH2]([CX4,c])),C$([CH3]),c$(c):1]>>[C,c:1][C:2]#[N:4]",
+    "source": "Button"
+  },
+  {
+    "id": 64,
+    "name": "Pictet-Spengler",
+    "smarts": "[cH1:1]1:[c:2](-[CH2:7]-[CH2:8]-[NH2:9]):[c:3]:[c:4]:[c:5]:[c:6]:1.[#6:11]-[CH1;R0:10]=[OD1]>>[c:1]12:[c:2](-[CH2:7]-[CH2:8]-[NH1:9]-[C:10]-2(-[#6:11])):[c:3]:[c:4]:[c:5]:[c:6]:1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 65,
+    "name": "benzimidazole_derivatives_carboxylic-acid/ester",
+    "smarts": "[c;r6:1](-[NH1;$(N-[#6]):2]):[c;r6:3](-[NH2:4]).[#6:6]-[C;R0:5](=[OD1])-[#8;H1,$(O-[CH3])]>>[c:3]2:[c:1]:[n:2]:[c:5](-[#6:6]):[n:4]@2",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 66,
+    "name": "benzimidazole_derivatives_aldehyde",
+    "smarts": "[c;r6:1](-[NH1;$(N-[#6]):2]):[c;r6:3](-[NH2:4]).[#6:6]-[CH1;R0:5](=[OD1])>>[c:3]2:[c:1]:[n:2]:[c:5](-[#6:6]):[n:4]@2",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 67,
+    "name": "benzothiazole",
+    "smarts": "[c;r6:1](-[SH1:2]):[c;r6:3](-[NH2:4]).[#6:6]-[CH1;R0:5](=[OD1])>>[c:3]2:[c:1]:[s:2]:[c:5](-[#6:6]):[n:4]@2",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 68,
+    "name": "benzoxazole_arom-aldehyde",
+    "smarts": "[c:1](-[OH1;$(Oc1ccccc1):2]):[c;r6:3](-[NH2:4]).[c:6]-[CH1;R0:5](=[OD1])>>[c:3]2:[c:1]:[o:2]:[c:5](-[c:6]):[n:4]@2",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 69,
+    "name": "benzoxazole_carboxylic-acid",
+    "smarts": "[c;r6:1](-[OH1:2]):[c;r6:3](-[NH2:4]).[#6:6]-[C;R0:5](=[OD1])-[OH1]>>[c:3]2:[c:1]:[o:2]:[c:5](-[#6:6]):[n:4]@2",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 70,
+    "name": "thiazole",
+    "smarts": "[#6:6]-[C;R0:1](=[OD1])-[CH1;R0:5](-[#6:7])-[*;#17,#35,#53].[NH2:2]-[C:3]=[SD1:4]>>[c:1]2(-[#6:6]):[n:2]:[c:3]:[s:4][c:5]([#6:7]):2",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 71,
+    "name": "Niementowski_quinazoline",
+    "smarts": "[c:1](-[C;$(C-c1ccccc1):2](=[OD1:3])-[OH1]):[c:4](-[NH2:5]).[N;!H0;!$(N-N);!$(N-C=N);!$(N(-C=O)-C=O):6]-[C;H1,$(C-[#6]):7]=[OD1]>>[c:4]2:[c:1]-[C:2](=[O:3])-[N:6]-[C:7]=[N:5]-2",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 72,
+    "name": "tetrazole_terminal",
+    "smarts": "[CH0;$(C-[#6]):1]#[NH0:2]>>[C:1]1=[N:2]-N-N=N-1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 73,
+    "name": "tetrazole_connect_regioisomere_1",
+    "smarts": "[CH0;$(C-[#6]):1]#[NH0:2].[C;A;!$(C=O):3]-[*;#17,#35,#53]>>[C:1]1=[N:2]-N(-[C:3])-N=N-1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 74,
+    "name": "tetrazole_connect_regioisomere_2",
+    "smarts": "[CH0;$(C-[#6]):1]#[NH0:2].[C;A;!$(C=O):3]-[*;#17,#35,#53]>>[C:1]1=[N:2]-N=N-N-1(-[C:3])",
+    "source": "Hartenfeller",
+    "retro_smarts": "[c:1]1[n:2]nnn1[C:3]>>[C:1]#[N:2].[C:3][Br]"
+  },
+  {
+    "id": 75,
+    "name": "Huisgen_Cu-catalyzed_1,4-subst",
+    "smarts": "[CH0;$(C-[#6]):1]#[CH1:2].[C;H1,H2;A;!$(C=O):3]-[*;#17,#35,#53,OH1]>>[C:1]1=[C:2]-N(-[C:3])-N=N-1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 76,
+    "name": "Huisgen_Ru-catalyzed_1,5_subst",
+    "smarts": "[CH0;$(C-[#6]):1]#[CH1:2].[C;H1,H2;A;!$(C=O):3]-[*;#17,#35,#53,OH1]>>[C:1]1=[C:2]-N=NN(-[C:3])-1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 77,
+    "name": "Huisgen_disubst-alkyne",
+    "smarts": "[CH0;$(C-[#6]):1]#[CH0;$(C-[#6]):2].[C;H1,H2;A;!$(C=O):3]-[*;#17,#35,#53,OH1]>>[C:1]1=[C:2]-N=NN(-[C:3])-1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 78,
+    "name": "1,2,4-triazole_acetohydrazide",
+    "smarts": "[CH0;$(C-[#6]):1]#[NH0:2].[NH2:3]-[NH1:4]-[CH0;$(C-[#6]);R0:5]=[OD1]>>[N:2]1-[C:1]=[N:3]-[N:4]-[C:5]=1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 79,
+    "name": "1,2,4-triazole_carboxylic-acid/ester",
+    "smarts": "[CH0;$(C-[#6]):1]#[NH0:2].[CH0;$(C-[#6]);R0:5](=[OD1])-[#8;H1,$(O-[CH3]),$(O-[CH2]-[CH3])]>>[N:2]1-[C:1]=N-N-[C:5]=1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 80,
+    "name": "spiro-chromanone",
+    "smarts": "[c:1](-[C;$(C-c1ccccc1):2](=[OD1:3])-[CH3:4]):[c:5](-[OH1:6]).[C;$(C1-[CH2]-[CH2]-[N,C]-[CH2]-[CH2]-1):7](=[OD1])>>[O:6]1-[c:5]:[c:1]-[C:2](=[OD1:3])-[C:4]-[C:7]-1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 81,
+    "name": "pyrazole",
+    "smarts": "[#6;!$([#6](-C=O)-C=O):4]-[CH0:1](=[OD1])-[C;H1&!$(C-[*;!#6])&!$(C-C(=O)O),H2:2]-[CH0;R0:3](=[OD1])-[#6;!$([#6](-C=O)-C=O):5].[NH2:6]-[N;!H0;$(N-[#6]),H2:7]>>[C:1]1(-[#6:4])-[C:2]=[C:3](-[#6:5])-[N:7]-[N:6]=1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 82,
+    "name": "triaryl-imidazole",
+    "smarts": "[C;$(C-c1ccccc1):1](=[OD1])-[C;D3;$(C-c1ccccc1):2]~[O;D1,H1].[CH1;$(C-c):3]=[OD1]>>[C:1]1-N=[C:3]-[NH1]-[C:2]=1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 83,
+    "name": "benzofuran",
+    "smarts": "[*;Br,I;$(*c1ccccc1)]-[c:1]:[c:2]-[OH1:3].[CH1:5]#[C;$(C-[#6]):4]>>[c:1]1:[c:2]-[O:3]-[C:4]=[C:5]-1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 84,
+    "name": "benzothiophene",
+    "smarts": "[*;Br,I;$(*c1ccccc1)]-[c:1]:[c:2]-[SD2:3]-[CH3].[CH1:5]#[C;$(C-[#6]):4]>>[c:1]1:[c:2]-[S:3]-[C:4]=[C:5]-1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 85,
+    "name": "indole",
+    "smarts": "[*;Br,I;$(*c1ccccc1)]-[c:1]:[c:2]-[NH2:3].[CH1:5]#[C;$(C-[#6]):4]>>[c:1]1:[c:2]-[N:3]-[C:4]=[C:5]-1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 86,
+    "name": "oxadiazole",
+    "smarts": "[#6:6][C:5]#[#7;D1:4].[#6:1][C:2](=[OD1:3])[OH1]>>[#6:6][c:5]1[n:4][o:3][c:2]([#6:1])n1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 87,
+    "name": "Suzuki",
+    "smarts": "[#6;H0;D3;$([#6](~[#6])~[#6]):1]B(O)O.[#6;H0;D3;$([#6](~[#6])~[#6]):2][Cl,Br,I]>>[#6:2][#6:1]",
+    "source": "Hartenfeller",
+    "retro_smarts": "[c:1]-[c:2]>>[c:1][Br].[c:2]B(O)O"
+  },
+  {
+    "id": 88,
+    "name": "Mitsunobu_phenole",
+    "smarts": "[C;H1&$(C([#6])[#6]),H2&$(C[#6]):1][OH1].[OH1;$(Oc1ccccc1):2]>>[C:1][O:2]",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 89,
+    "name": "Mitsunobu_tetrazole_1",
+    "smarts": "[C;H1&$(C([#6])[#6]),H2&$(C[#6]):1][OH1].[#7H1:2]1~[#7:3]~[#7:4]~[#7:5]~[#6:6]~1>>[C:1][#7:2]1:[#7:3]:[#7:4]:[#7:5]:[#6:6]:1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 90,
+    "name": "Mitsunobu_tetrazole_2",
+    "smarts": "[C;H1&$(C([#6])[#6]),H2&$(C[#6]):1][OH1].[#7H1:2]1~[#7:3]~[#7:4]~[#7:5]~[#6:6]~1>>[#7H0:2]1:[#7:3]:[#7H0:4]([C:1]):[#7:5]:[#6:6]:1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 91,
+    "name": "Mitsunobu_tetrazole_3",
+    "smarts": "[C;H1&$(C([#6])[#6]),H2&$(C[#6]):1][OH1].[#7:2]1~[#7:3]~[#7H1:4]~[#7:5]~[#6:6]~1>>[C:1][#7H0:2]1:[#7:3]:[#7H0:4]:[#7:5]:[#6:6]:1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 92,
+    "name": "Mitsunobu_tetrazole_4",
+    "smarts": "[C;H1&$(C([#6])[#6]),H2&$(C[#6]):1][OH1].[#7:2]1~[#7:3]~[#7H1:4]~[#7:5]~[#6:6]~1>>[#7:2]1:[#7:3]:[#7:4]([C:1]):[#7:5]:[#6:6]:1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 93,
+    "name": "Heck_terminal_vinyl",
+    "smarts": "[#6;c,$(C(=O)O),$(C#N):3][#6;H1:2]=[#6;H2:1].[#6;$([#6]=[#6]),$(c:c):4][Cl,Br,I]>>[#6:4]/[#6:1]=[#6:2]/[#6:3]",
+    "source": "Hartenfeller",
+    "retro_smarts": "[c:4]-[CH:1]=[CH:2]-[#6:3]>>[c:4][Br].[CH2:1]=[CH:2]-[#6:3]"
+  },
+  {
+    "id": 94,
+    "name": "Heck_non-terminal_vinyl",
+    "smarts": "[#6;c,$(C(=O)O),$(C#N):3][#6:2]([#6:5])=[#6;H1;$([#6][#6]):1].[#6;$([#6]=[#6]),$(c:c):4][Cl,Br,I]>>[#6:4][#6;H0:1]=[#6:2]([#6:5])[#6:3]",
+    "source": "Hartenfeller",
+    "retro_smarts": "[c:4]-[C;H0:1]=[C:2]>>[c:4][Br].[CH2:1]=[C:2]"
+  },
+  {
+    "id": 95,
+    "name": "Stille",
+    "smarts": "[#6;$(C=C-[#6]),$(c:c):1][Br,I].[Cl,Br,I][c:2]>>[c:2][#6:1]",
+    "source": "Hartenfeller",
+    "retro_smarts": "[c:1]-[c:2]>>[c:1][Br].[c:2][Br]"
+  },
+  {
+    "id": 96,
+    "name": "Grignard_carbonyl",
+    "smarts": "[#6:1][C:2]#[#7;D1].[Cl,Br,I][#6;$([#6]~[#6]);!$([#6]([Cl,Br,I])[Cl,Br,I]);!$([#6]=O):3]>>[#6:1][C:2](=O)[#6:3]",
+    "source": "Hartenfeller",
+    "retro_smarts": "[#6:1]-[C:2](=O)-[#6:3]>>[#6:1][C:2]#N.[#6:3][Br]"
+  },
+  {
+    "id": 97,
+    "name": "Grignard_alcohol",
+    "smarts": "[#6:1][C;H1,$([C]([#6])[#6]):2]=[OD1:3].[Cl,Br,I][#6;$([#6]~[#6]);!$([#6]([Cl,Br,I])[Cl,Br,I]);!$([#6]=O):4]>>[C:1][#6:2]([OH1:3])[#6:4]",
+    "source": "Hartenfeller",
+    "retro_smarts": "[#6:1]-[C:2]([OH])-[#6:4]>>[#6:1][C:2]=O.[#6:4][Br]"
+  },
+  {
+    "id": 98,
+    "name": "Sonogashira",
+    "smarts": "[#6;$(C=C-[#6]),$(c:c):1][Br,I].[CH1;$(C#CC):2]>>[#6:1][C:2]",
+    "source": "Hartenfeller",
+    "retro_smarts": "[c:1]-[C:2]#[C:3]>>[c:1][Br].[C:2]#[C:3]"
+  },
+  {
+    "id": 99,
+    "name": "Schotten-Baumann_amide",
+    "smarts": "[C;$(C=O):1][OH1].[N;$(N[#6]);!$(N=*);!$([N-]);!$(N#*);!$([ND3]);!$([ND4]);!$(N[O,N]);!$(N[C,S]=[S,O,N]):2]>>[C:1][N+0:2]",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 100,
+    "name": "sulfon_amide",
+    "smarts": "[S;$(S(=O)(=O)[C,N]):1][Cl].[N;$(NC);!$(N=*);!$([N-]);!$(N#*);!$([ND3]);!$([ND4]);!$(N[c,O]);!$(N[C,S]=[S,O,N]):2]>>[S:1][N+0:2]",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 101,
+    "name": "N-arylation_heterocycles",
+    "smarts": "[c:1]B(O)O.[nH1;+0;r5;!$(n[#6]=[O,S,N]);!$(n~n~n);!$(n~n~c~n);!$(n~c~n~n):2]>>[c:1][n:2]",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 102,
+    "name": "Wittig",
+    "smarts": "[#6:3]-[C;H1,$([CH0](-[#6])[#6]);!$(CC=O):1]=[OD1].[Cl,Br,I][C;H2;$(C-[#6]);!$(CC[I,Br]);!$(CCO[CH3]):2]>>[C:3][C:1]=[C:2]",
+    "source": "Hartenfeller",
+    "retro_smarts": "[#6:3]-[C:1]=[C:2]>>[#6:3][C:1]=O.[C:2][Br]"
+  },
+  {
+    "id": 103,
+    "name": "Buchwald-Hartwig",
+    "smarts": "[Cl,Br,I][c;$(c1:[c,n]:[c,n]:[c,n]:[c,n]:[c,n]:1):1].[N;$(NC)&!$(N=*)&!$([N-])&!$(N#*)&!$([ND3])&!$([ND4])&!$(N[c,O])&!$(N[C,S]=[S,O,N]),H2&$(Nc1:[c,n]:[c,n]:[c,n]:[c,n]:[c,n]:1):2]>>[c:1][N:2]",
+    "source": "Hartenfeller",
+    "retro_smarts": "[c:1]-[N;!$(NC=O);!$(N=[#6]);!$(N#[#6]):2]>>[c:1][Br].[N:2]"
+  },
+  {
+    "id": 104,
+    "name": "imidazole",
+    "smarts": "[C;$(C([#6])[#6;!$([#6]Br)]):4](=[OD1])[CH;$(C([#6])[#6]):5]Br.[#7;H2:3][C;$(C(=N)(N)[c,#7]):2]=[#7;H1;D1:1]>>[C:4]1=[CH0:5][NH:3][C:2]=[N:1]1",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 105,
+    "name": "decarboxylative_coupling",
+    "smarts": "[c;$(c1[c;$(c[C,S,N](=[OD1])[*;R0;!OH1])]cccc1):1][C;$(C(=O)[O;H1])].[c;$(c1aaccc1):2][Cl,Br,I]>>[c:1][c:2]",
+    "source": "Hartenfeller",
+    "retro_smarts": "[c:1]-[c:2]>>[c:1]C(=O)[OH].[c:2][Br]"
+  },
+  {
+    "id": 106,
+    "name": "heteroaromatic_nuc_sub",
+    "smarts": "[c;!$(c1ccccc1);$(c1[n,c]c[n,c]c[n,c]1):1][Cl,F].[N;$(NC);!$(N=*);!$([N-]);!$(N#*);!$([ND3]);!$([ND4]);!$(N[c,O]);!$(N[C,S]=[S,O,N]):2]>>[c:1][N:2]",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 107,
+    "name": "nucl_sub_aromatic_ortho_nitro",
+    "smarts": "[c;$(c1c(N(~O)~O)cccc1):1][Cl,F].[N;$(NC);!$(N=*);!$([N-]);!$(N#*);!$([ND3]);!$([ND4]);!$(N[c,O]);!$(N[C,S]=[S,O,N]):2]>>[c:1][N:2]",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 108,
+    "name": "nucl_sub_aromatic_para_nitro",
+    "smarts": "[c;$(c1ccc(N(~O)~O)cc1):1][Cl,F].[N;$(NC);!$(N=*);!$([N-]);!$(N#*);!$([ND3]);!$([ND4]);!$(N[c,O]);!$(N[C,S]=[S,O,N]):2]>>[c:1][N:2]",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 109,
+    "name": "urea",
+    "smarts": "[N;$(N-[#6]):3]=[C;$(C=O):1].[N;$(N[#6]);!$(N=*);!$([N-]);!$(N#*);!$([ND3]);!$([ND4]);!$(N[O,N]);!$(N[C,S]=[S,O,N]):2]>>[N:3]-[C:1]-[N+0:2]",
+    "source": "Hartenfeller"
+  },
+  {
+    "id": 110,
+    "name": "thiourea",
+    "smarts": "[N;$(N-[#6]):3]=[C;$(C=S):1].[N;$(N[#6]);!$(N=*);!$([N-]);!$(N#*);!$([ND3]);!$([ND4]);!$(N[O,N]);!$(N[C,S]=[S,O,N]):2]>>[N:3]-[C:1]-[N+0:2]",
+    "source": "Hartenfeller"
+  }
+]

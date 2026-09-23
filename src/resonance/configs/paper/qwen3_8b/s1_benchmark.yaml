@@ -1,0 +1,37 @@
+# Qwen3-8B S1 benchmark on the USPTO-50k test set (T=0.6).
+#
+# QUIRK, kept as run: `prompt_kwargs` is NOT read by workflows/benchmark.py (the key it reads
+# is `system_prompt_kwargs`), so the published benchmark used the default "none" system
+# prompt, not "rules". Renaming the key would change the reported numbers.
+parser_name: ForwardRxnParser
+parser_kwargs: {}
+prompt_name: ForwardRxnPrompt
+prompt_kwargs:
+  system_prompt_option: rules
+data_path: ${run_dir:uspto}/test.json
+representation: smiles
+inference:
+  mode: vllm
+  model_name: ${run_dir:traces}/outputs/model_0a_no_reaction_id
+  vllm_kwargs:
+    tensor_parallel_size: 2
+    dtype: bfloat16
+    max_model_len: 16384
+  sampling_params:
+    temperature: 0.6
+    max_tokens: 16384
+    top_p: 0.95
+    top_k: 20
+    seed: 42
+output_path: ${run_dir:s1_8b}/outputs/benchmark/results.jsonl
+wandb:
+  project: resonance
+  entity: null
+  name: qwen3-8b-s1-benchmark
+  tags:
+  - qwen3-8b
+  - full-finetune
+  - sft
+  - kimi_traces
+  - uspto50k
+  - forward-smiles

@@ -1,0 +1,42 @@
+{
+  "note": "Copies of the scripts that produced the metareasoning results. The only edits since those runs replace machine paths and directory names; do not edit, change behaviour in ../summary.py or ../runner.py.",
+  "source_root": "<RESONANCE_DATA_ROOT>",
+  "files": {
+    "build_eval_set_resampled.py": {
+      "sha256": "494dd3868ad1a32ac44972264d636702e68c2430de717aad93c19f0c3544e012",
+      "source": "metareasoning/vendor/build_eval_set_resampled.py"
+    },
+    "classify_reactions.py": {
+      "sha256": "392525a9824315de9911a1cbc130d3727cef2f7486e44dea1ffa9f78a069b824",
+      "source": "classifier/scripts/classify_reactions.py"
+    },
+    "conditions.py": {
+      "sha256": "1589500bd7e8bde8961d8e15146f03a6f04bd3df91c5e5ed9be2689bc34dde5c",
+      "source": "metareasoning/vendor/conditions.py"
+    },
+    "e1_allocation.py": {
+      "sha256": "d192bf7fe71b6709e29204aaf7a69a5cff6e97d0dfafdcf44a7d3780c829b2d8",
+      "source": "metareasoning/vendor/e1_allocation.py"
+    },
+    "models.py": {
+      "sha256": "f15e308a4977a511d0b55cf81a3e104541bde24f71cfb881e684be3f319164f7",
+      "source": "metareasoning/vendor/models.py"
+    },
+    "relabel_classes.py": {
+      "sha256": "dc0aa0d2a959cf0dd29e7441c3747308c0087a19df9588ebb72ad00dfe1ebfd4",
+      "source": "metareasoning/vendor/relabel_classes.py"
+    },
+    "score_selfcorrect.py": {
+      "sha256": "2360a7f594fdf56506c10d9b4facc759fec6126e84a8fecb550c44dca20d3c7a",
+      "source": "metareasoning/vendor/score_selfcorrect.py"
+    },
+    "selfcorrect_runner.py": {
+      "sha256": "d39bf44c190fb9d3192b907d56e99237e06fbcca68b2e511089ac6b3947cc03f",
+      "source": "metareasoning/vendor/selfcorrect_runner.py"
+    },
+    "transition_matrix.py": {
+      "sha256": "be18fa5cb0bd5af668691ee8bc4bfc66e2816514640266114aa364476b630f5d",
+      "source": "metareasoning/vendor/transition_matrix.py"
+    }
+  }
+}

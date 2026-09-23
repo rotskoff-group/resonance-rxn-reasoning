@@ -1,0 +1,25 @@
+# Kimi no-ID 8B S1 on forward synthetic test split alpha=0.5.
+# Same settings as this model's USPTO benchmark (the S1 benchmark config):
+# prompt_kwargs is ignored by the workflow, so the short "none" system prompt is used, as on USPTO.
+parser_name: ForwardRxnParser
+parser_kwargs: {}
+prompt_name: ForwardRxnPrompt
+prompt_kwargs:
+  system_prompt_option: rules   # inert, see note above
+data_path: ???   # set by run_kimi8b.py: run_dir('synthetic_ood')/data/synthetic_alpha_0.5/test.json
+representation: smiles
+max_samples: 0
+inference:
+  mode: vllm
+  model_name: ???   # set by run_kimi8b.py: MODELS['s1']
+  vllm_kwargs:
+    tensor_parallel_size: 2
+    dtype: bfloat16
+    max_model_len: 16384
+  sampling_params:
+    temperature: 0.6
+    max_tokens: 16384
+    top_p: 0.95
+    top_k: 20
+    seed: 42
+output_path: ???   # set by run_kimi8b.py: run_dir('synthetic_ood')/outputs/kimi8b_noid/s1/synthetic_alpha_0.5/results.jsonl

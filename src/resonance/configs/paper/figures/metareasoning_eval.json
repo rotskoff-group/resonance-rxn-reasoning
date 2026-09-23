@@ -1,0 +1,34 @@
+{
+  "name": "kimi_8b_no_id",
+  "run_dir": "${run_dir:metareasoning}/no_id",
+  "models": {
+    "kimi_s1": {
+      "path": "${run_dir:traces}/outputs/model_0a_no_reaction_id",
+      "benchmark": "${run_dir:s1_8b}/outputs/benchmark/results.jsonl",
+      "think_is_prefilled": false
+    },
+    "kimi_s2": {
+      "path": "${run_dir:s2_8b}/outputs/model/checkpoint-2229",
+      "benchmark": "${run_dir:s2_8b_bench}/outputs/results.jsonl",
+      "think_is_prefilled": false
+    },
+    "kimi_s3": {
+      "path": "${run_dir:s3_8b}/outputs/benchmark_model",
+      "benchmark": "${run_dir:s3_8b}/outputs/benchmark/results.jsonl",
+      "think_is_prefilled": false
+    }
+  },
+  "k": 9,
+  "max_tokens": 8192,
+  "max_model_len": 32768,
+  "gpu_mem": 0.6,
+  "seed": 42,
+  "reflection_n": 400,
+  "e2_n": 1500,
+  "train_json": "${run_dir:uspto}/train.json",
+  "test_json": "${run_dir:uspto}/test.json",
+  "labels_train": "${run_dir:uspto_classes}/outputs/uspto_labels_train.json",
+  "reagents": "${run_dir:relabel}/data/reagent_infer.json",
+  "labels_test": "${run_dir:relabel}/data/class_relabel_v2.json",
+  "corpus_identity": "no-id-b97ef67b9ba65863"
+}

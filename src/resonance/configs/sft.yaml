@@ -1,0 +1,53 @@
+# Configuration for SFT training
+
+# Model configuration
+model_name: gpt2
+model_kwargs:
+  dtype: bfloat16
+  device_map: auto
+
+# Tokenizer configuration
+tokenizer_name: gpt2
+tokenizer_kwargs:
+  trust_remote_code: false
+  use_fast: true
+
+# Dataset configuration
+# Single path or list of paths to precomputed datasets from precompute.py.
+# Multiple shards are concatenated automatically.
+# dataset_path:
+#   - /path/to/shard1
+#   - /path/to/shard2
+dataset_path: /path/to/preprocessed_dataset
+
+# Data collator configuration
+collator:
+  type: DataCollatorForLanguageModeling  # Options: DataCollatorForLanguageModeling, DataCollatorForSeq2Seq, null
+  kwargs:
+    mlm: false  # Set to true for masked language modeling, false for causal LM
+    # mlm_probability: 0.15  # Only used if mlm=true
+
+# Training arguments
+training_args:
+  output_dir: ./sft_output
+  num_train_epochs: 1
+  per_device_train_batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 2.0e-5
+  logging_steps: 10
+  save_steps: 100
+  save_total_limit: 2
+  fp16: false
+  bf16: true
+  optim: adamw_torch
+  warmup_steps: 100
+  report_to: wandb
+  run_name: sft-experiment  # Name for this specific run
+
+# Wandb configuration
+wandb:
+  project: resonance-sft  # Project name in wandb dashboard
+  entity: null  # Your wandb username/team (null uses default)
+  name: null  # Run name (null uses auto-generated name or run_name from training_args)
+  tags: []  # Optional tags for organizing runs
+  notes: null  # Optional notes about this run

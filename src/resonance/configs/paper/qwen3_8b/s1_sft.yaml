@@ -1,0 +1,36 @@
+# Qwen3-8B S1: SFT on the 40k Kimi K3 no-ID teacher traces.
+# Three epochs, eight GPUs, effective batch 32.
+# Locations use ${run_dir:<key>} (resonance.paths); run through resonance.stages.qwen3_8b.workflow.
+model_name: Qwen/Qwen3-8B
+model_kwargs:
+  dtype: bfloat16
+  attn_implementation: flash_attention_2
+tokenizer_name: Qwen/Qwen3-8B
+tokenizer_kwargs:
+  trust_remote_code: true
+  use_fast: true
+
+dataset_path:
+  - ${run_dir:traces}/outputs/sft_dataset_0a_no_reaction_id
+
+collator:
+  type: null
+
+training_args:
+  output_dir: ${run_dir:traces}/outputs/model_0a_no_reaction_id
+  num_train_epochs: 3
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 2     # effective batch = 2 x 8 GPUs x 2 = 32
+  gradient_checkpointing: true
+  max_length: 2048
+  learning_rate: 2.0e-5
+  warmup_steps: 100
+  bf16: true
+  logging_steps: 10
+  save_steps: 500
+  save_total_limit: 2
+  report_to: wandb
+
+wandb:
+  project: resonance
+  name: qwen3-8b-s1-sft

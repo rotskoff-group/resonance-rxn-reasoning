@@ -1,0 +1,30 @@
+# Qwen3-8B S2 benchmark on the USPTO-50k test set (T=0.6).
+#
+# QUIRKS, kept as run:
+#   * `prompt_kwargs` is ignored by workflows/benchmark.py -> effective "none" system prompt.
+#   * No sampling seed was set for this benchmark (S1 and S3 used seed 42).
+parser_name: ForwardRxnParser
+parser_kwargs: {}
+prompt_name: ForwardRxnPrompt
+prompt_kwargs:
+  system_prompt_option: rules
+data_path: ${run_dir:uspto}/test.json
+representation: smiles
+inference:
+  mode: vllm
+  model_name: ${run_dir:s2_8b}/outputs/model/checkpoint-2229
+  vllm_kwargs:
+    tensor_parallel_size: 2
+    dtype: bfloat16
+    max_model_len: 16384
+  sampling_params:
+    temperature: 0.6
+    top_p: 0.95
+    top_k: 20
+    max_tokens: 16384
+output_path: ${run_dir:s2_8b_bench}/outputs/results.jsonl
+wandb:
+  project: resonance
+  entity: null
+  name: qwen3-8b-s2-benchmark
+  tags: [qwen3-8b, s2, rs-sft, uspto50k, forward-smiles]

@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this code, the Resonance models or the Kimi K3 trace dataset, please cite the paper."
+title: "Resonance: distillation and self-training for reaction prediction"
+license: MIT
+repository-code: "https://github.com/rotskoff-group/resonance-rxn-reasoning"
+authors:
+  - family-names: Aneesh
+    given-names: Anagha
+  - family-names: Ibarraran
+    given-names: Sebastian
+  - family-names: Hu
+    given-names: Frank
+  - family-names: Liu
+    given-names: Jason
+  - family-names: Rotskoff
+    given-names: Grant
+preferred-citation:
+  type: generic
+  title: "Distillation, Self-Training, and the Fragility of Learned Chemical Reasoning"
+  authors:
+    - family-names: Aneesh
+      given-names: Anagha
+    - family-names: Ibarraran
+      given-names: Sebastian
+    - family-names: Hu
+      given-names: Frank
+    - family-names: Liu
+      given-names: Jason
+    - family-names: Rotskoff
+      given-names: Grant
+  year: 2026
+  notes: "Preprint"

@@ -1,0 +1,50 @@
+# Configuration for benchmark evaluation workflow
+
+# Parser configuration
+parser_name: MolPropertiesParser
+parser_kwargs: {}
+
+# Prompt configuration
+prompt_name: MolPropertiesPrompt
+system_prompt_kwargs: {}
+task_template_kwargs: {}
+
+# Data configuration
+data_path: /path/to/data
+representation: smiles
+
+# Optional sample cap
+max_samples: 5
+
+# Inference configuration
+inference:
+  mode: vllm # vllm or api
+  model_name: 
+
+  # --- vllm settings (mode: vllm only) ---
+  vllm_kwargs:
+    tensor_parallel_size: 1
+    dtype: bfloat16
+    max_model_len: 4096
+
+  sampling_params:
+    temperature: 0.0
+    max_tokens: 512
+
+  # --- API settings (mode: api only) ---
+  # api_key: null      # falls back to OPENAI_API_KEY or ANTHROPIC_API_KEY env var
+  # api_base: null     # e.g. https://api.anthropic.com/v1  |  http://localhost:8000/v1
+  # request_kwargs:
+  #   temperature: 0.0
+  #   max_tokens: 512
+
+# Output configuration
+output_path: /output/path
+
+# Wandb configuration (optional — omit or set to null to disable)
+wandb:
+  project: resonance-benchmark
+  entity: null  # Your wandb username/team (null uses default)
+  name: null    # Run name (null uses auto-generated name)
+  tags: []
+  notes: null

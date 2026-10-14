@@ -1,0 +1,64 @@
+# Qwen3-8B S3: DPO+NLL from S2 (checkpoint-2229) on self-play pairs.
+#   chosen:   a correct model completion (same format as rejected)
+#   rejected: the highest-Tanimoto wrong model completion (hard negative)
+#   loss:     DPO sigmoid + auxiliary SFT NLL on chosen (weight 0.2)
+# Eight GPUs x per-device 1 x accumulation 4 = 32 pairs/step.
+# The pairs were generated with the "rules" system prompt (released as dpo_pairs.jsonl).
+model_name: ${run_dir:s2_8b}/outputs/model/checkpoint-2229
+model_kwargs:
+  dtype: bfloat16
+  attn_implementation: sdpa
+
+tokenizer_name: ${run_dir:s2_8b}/outputs/model/checkpoint-2229
+tokenizer_kwargs:
+  trust_remote_code: true
+  use_fast: true
+
+data_path: ${run_dir:s3_8b}/outputs/dpo_pairs.jsonl
+
+lora:
+  r: 128
+  lora_alpha: 32
+  target_modules: all-linear
+  lora_dropout: 0.05
+  bias: none
+
+training_args:
+  output_dir: ${run_dir:s3_8b}/outputs/model
+  max_steps: 3000
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 4
+  beta: 0.1
+  loss_type:
+    - sigmoid
+    - sft
+  loss_weights:
+    - 1.0
+    - 0.2
+  learning_rate: 2.0e-6
+  max_length: 4096
+  precompute_ref_log_probs: true
+  sync_ref_model: false
+  bf16: true
+  gradient_checkpointing: true
+  logging_steps: 10
+  save_steps: 500
+  save_total_limit: null
+  report_to: wandb
+  remove_unused_columns: false
+
+wandb:
+  project: resonance
+  entity: null
+  name: qwen3-8b-s3-dpo-selfplay
+  tags:
+    - dpo
+    - dpo-nll
+    - qwen3-8b
+    - selfplay-positive
+    - hard-negative
+    - rft-init
+    - uspto-50k
+    - lora-r128
+    - lr-2e-6
+    - beta-0.1

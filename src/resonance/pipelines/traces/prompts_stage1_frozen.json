@@ -1,0 +1,10 @@
+{
+  "SYSTEM_PROMPT": {
+    "len": 319,
+    "sha256_16": "535cfdb84475881d"
+  },
+  "USER_TEMPLATE": {
+    "len": 723,
+    "sha256_16": "ef4d0fe0492ba7d0"
+  }
+}

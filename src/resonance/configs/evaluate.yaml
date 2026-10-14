@@ -1,0 +1,28 @@
+# Configuration for evaluation of benchmark results
+
+# Path to the JSONL file produced by benchmark.py
+results_path: /path/to/results.jsonl
+
+# Optional: restrict evaluation to a single question_type (null = evaluate all)
+question_type: null
+
+# Plotting configuration
+plot:
+  # null = display interactively; set a directory path to save all figures there
+  output_dir: null  # e.g. /output/plots
+
+  # --- Single-model benchmark plots ---
+  overall_accuracy: true           # bar chart of overall accuracy per model
+  accuracy_by_question_type: true  # grouped bars: accuracy per question type
+  accuracy_heatmap: false          # heatmap of accuracy (model × question type)
+  precision_recall_f1: false       # P/R/F1 bars per question type (requires sklearn)
+  answer_rate: false               # fraction of questions answered vs skipped
+
+  # --- Multi-model comparison plots (require baseline_label + additional_results) ---
+  # additional_results:            # extra result files for comparison
+  #   - label: baseline
+  #     path: /path/to/baseline.jsonl
+  lollipop_delta: false       # horizontal lollipop chart of Δ accuracy vs baseline
+  delta_vs_baseline: false    # grouped Δ bar chart per question type
+  accuracy_and_delta: false   # side-by-side overall accuracy + Δ in one figure
+  baseline_label: null        # label of the baseline model for delta plots

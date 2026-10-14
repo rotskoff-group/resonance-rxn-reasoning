@@ -1,0 +1,59 @@
+name: CI
+
+on: [ push, pull_request ]
+
+jobs:
+  lint:
+    name: Lint and type check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7.1.6
+        with:
+          version: "latest"
+      - name: Install python
+        run: uv python install
+      # The locked environment pins ruff and ty (dev group), so CI and local runs agree.
+      - name: Install dependencies
+        run: uv sync --frozen
+      # Rules and exclusions: [tool.ruff] and [tool.ty] in pyproject.toml.
+      - name: Lint (pycodestyle, pyflakes, import order, bugbear, pyupgrade)
+        run: uv run ruff check --output-format=github .
+      - name: Type check
+        run: uv run ty check --output-format=github .
+      - name: Python files compile
+        run: uv run python -m compileall -q src
+
+  smoke:
+    name: Figures and CLIs (CPU)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7.1.6
+        with:
+          version: "latest"
+      - name: Install python
+        run: uv python install
+      - name: Install dependencies
+        run: uv sync --frozen
+      - name: Frozen metareasoning scripts match their manifest
+        run: uv run python -m resonance.analysis.metareasoning.verify
+      - name: Every plot renders from its example input
+        run: |
+          uv run python -m resonance.plots.examples --out /tmp/plot_examples
+          uv run python -m resonance.plots.run --data-dir /tmp/plot_examples --out-dir /tmp/plot_examples/figures
+      - name: Command-line entry points load
+        run: |
+          for m in resonance.download resonance.paper.run_all resonance.paper.classes \
+                   resonance.paper.backtrack resonance.paper.fig3 resonance.paper.fig7 resonance.paper.fig_appendix \
+                   resonance.pipelines.labels.relabel_train; do
+            uv run python -m "$m" --help > /dev/null
+          done
+      - name: Paper configs resolve through the workflows
+        run: |
+          for pair in sft:s1_sft sft:s2_sft dpo:s3_dpo benchmark:s1_benchmark benchmark:s2_benchmark; do
+            uv run python -m resonance.workflows.${pair%%:*} --config-path "$PWD/src/resonance/configs/paper/qwen3_8b" \
+              --config-name ${pair#*:} --cfg job --resolve > /dev/null
+          done
+      - name: Unit tests (evaluation prompts, scoring, download, Fig 2 input)
+        run: uv run python -m pytest -q tests

@@ -1,0 +1,55 @@
+[
+ {
+  "row": 9,
+  "starting_material": "COc1nc2ccc(C(O)c3cnnn3C)cc2c(Cl)c1Cc1ccc(C(F)(F)F)cc1",
+  "reagents": [],
+  "messages_8b": [
+   {
+    "role": "system",
+    "content": "\n        You are an expert organic chemist specializing in the forward prediction of organic reactions.\n        Your task is to predict the major product(s)\n        of organic reactions given starting materials and reagents.\n        "
+   },
+   {
+    "role": "user",
+    "content": "Here are the SMILES of the starting material and reagent(s).\nStarting material: COc1nc2ccc(C(O)c3cnnn3C)cc2c(Cl)c1Cc1ccc(C(F)(F)F)cc1\nReagents: No reagents\n\nPredict the single most likely primary product of the chemical reaction in SMILES format.\nThe reaction should be chemically reasonable, following typical organic reactivity principles.\nInstructions:\n        1. Identify the functional groups in the starting material\n        2. Determine which reagent(s) will react with these functional groups\n        3. Apply your knowledge of organic reaction mechanisms to predict the major product\n        4. Consider regioselectivity and stereoselectivity where applicable\n        If your proposed mechanism or product seems chemically implausible, revise your\n        reasoning and try a different mechanistic path.\n\nReturn the answer between <answer> and </answer> tags.\n"
+   }
+  ],
+  "messages_27b": [
+   {
+    "role": "system",
+    "content": "You are an expert organic chemist specializing in the forward prediction of organic reactions.\n        Correctly predicting the product of an organic reaction involves understanding of several key concepts.\n        Some of the most important concepts to consider include:\n\n        1. Acid-base chemistry: these reactions will proceed from a stronger acid to a weaker one.\n        2. Single displacement reactions: Similarly, these reactions will proceed by a more reactive element displacing a less reactive one.\n        3. Redox reactions: identify the relationship between reagents and their potential for reducing/oxidizing specific functional groups on a molecule.\n        4. Mechanistic analysis: leveraging knowledge of common reaction mechanisms, one can infer key functional groups in a molecule and their potential relationships to reagents and other key intramolecular functional groups\n\n        Your task is to predict the major product(s)\n        of organic reactions given starting materials and reagents."
+   },
+   {
+    "role": "user",
+    "content": "Here are the SMILES of the starting material and reagent(s).\nStarting material: COc1nc2ccc(C(O)c3cnnn3C)cc2c(Cl)c1Cc1ccc(C(F)(F)F)cc1\nReagents: No reagents\n\nPredict the single most likely primary product of the chemical reaction in SMILES format.\nThe reaction should be chemically reasonable, following typical organic reactivity principles.\nInstructions:\n        1. Identify the functional groups in the starting material\n        2. Determine which reagent(s) will react with these functional groups\n        3. Apply your knowledge of organic reaction mechanisms to predict the major product\n        4. Consider regioselectivity and stereoselectivity where applicable\n        If your proposed mechanism or product seems chemically implausible, revise your\n        reasoning and try a different mechanistic path.\n\nReturn the answer between <answer> and </answer> tags."
+   }
+  ]
+ },
+ {
+  "row": 355,
+  "starting_material": "C=O",
+  "reagents": [
+   "CNC",
+   "O=C1c2ccccc2S(=O)(=O)c2cc(C(=O)N3CCc4ccoc4C3)ccc21"
+  ],
+  "messages_8b": [
+   {
+    "role": "system",
+    "content": "\n        You are an expert organic chemist specializing in the forward prediction of organic reactions.\n        Your task is to predict the major product(s)\n        of organic reactions given starting materials and reagents.\n        "
+   },
+   {
+    "role": "user",
+    "content": "Here are the SMILES of the starting material and reagent(s).\nStarting material: C=O\nReagents: CNC, O=C1c2ccccc2S(=O)(=O)c2cc(C(=O)N3CCc4ccoc4C3)ccc21\n\nPredict the single most likely primary product of the chemical reaction in SMILES format.\nThe reaction should be chemically reasonable, following typical organic reactivity principles.\nInstructions:\n        1. Identify the functional groups in the starting material\n        2. Determine which reagent(s) will react with these functional groups\n        3. Apply your knowledge of organic reaction mechanisms to predict the major product\n        4. Consider regioselectivity and stereoselectivity where applicable\n        If your proposed mechanism or product seems chemically implausible, revise your\n        reasoning and try a different mechanistic path.\n\nReturn the answer between <answer> and </answer> tags.\n"
+   }
+  ],
+  "messages_27b": [
+   {
+    "role": "system",
+    "content": "You are an expert organic chemist specializing in the forward prediction of organic reactions.\n        Correctly predicting the product of an organic reaction involves understanding of several key concepts.\n        Some of the most important concepts to consider include:\n\n        1. Acid-base chemistry: these reactions will proceed from a stronger acid to a weaker one.\n        2. Single displacement reactions: Similarly, these reactions will proceed by a more reactive element displacing a less reactive one.\n        3. Redox reactions: identify the relationship between reagents and their potential for reducing/oxidizing specific functional groups on a molecule.\n        4. Mechanistic analysis: leveraging knowledge of common reaction mechanisms, one can infer key functional groups in a molecule and their potential relationships to reagents and other key intramolecular functional groups\n\n        Your task is to predict the major product(s)\n        of organic reactions given starting materials and reagents."
+   },
+   {
+    "role": "user",
+    "content": "Here are the SMILES of the starting material and reagent(s).\nStarting material: C=O\nReagents: CNC.O=C1c2ccccc2S(=O)(=O)c2cc(C(=O)N3CCc4ccoc4C3)ccc21\n\nPredict the single most likely primary product of the chemical reaction in SMILES format.\nThe reaction should be chemically reasonable, following typical organic reactivity principles.\nInstructions:\n        1. Identify the functional groups in the starting material\n        2. Determine which reagent(s) will react with these functional groups\n        3. Apply your knowledge of organic reaction mechanisms to predict the major product\n        4. Consider regioselectivity and stereoselectivity where applicable\n        If your proposed mechanism or product seems chemically implausible, revise your\n        reasoning and try a different mechanistic path.\n\nReturn the answer between <answer> and </answer> tags."
+   }
+  ]
+ }
+]

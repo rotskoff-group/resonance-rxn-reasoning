@@ -1,0 +1,45 @@
+# Qwen3-8B S2: rejection-sampling SFT from S1 on its own exact-correct rollouts.
+#
+# As run: the job resumed from checkpoint-500 on 8 GPUs (effective batch 2 x 4 x 8 = 64;
+# the first 500 steps ran on 4 GPUs, effective batch 32) and finished at step 2229.
+# For a fresh run from S1, set resume_from_checkpoint: null.
+model_name: ${run_dir:traces}/outputs/model_0a_no_reaction_id
+model_kwargs:
+  dtype: bfloat16
+  attn_implementation: flash_attention_2
+tokenizer_name: ${run_dir:traces}/outputs/model_0a_no_reaction_id
+tokenizer_kwargs:
+  trust_remote_code: true
+  use_fast: true
+dataset_path:
+- ${run_dir:s2_8b}/outputs/sft_dataset
+resume_from_checkpoint: ${run_dir:s2_8b}/outputs/model/checkpoint-500
+collator:
+  type: null
+training_args:
+  output_dir: ${run_dir:s2_8b}/outputs/model
+  num_train_epochs: 3
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 4
+  gradient_checkpointing: true
+  max_length: 1024
+  learning_rate: 1.0e-05
+  warmup_steps: 50
+  bf16: true
+  logging_steps: 10
+  save_steps: 500
+  save_total_limit: 2
+  report_to: wandb
+wandb:
+  project: resonance
+  entity: null
+  name: qwen3-8b-s2-rs-sft
+  tags:
+  - sft
+  - rejection-sampling
+  - qwen3-8b
+  - kimi
+  - no-reaction-id
+  - s2
+  notes: S2 initialized from S1. Exact-correct finished rollouts; sequences exceeding
+    1024 tokens excluded without truncation.

@@ -11,5 +11,5 @@ prompt and the template. Workflow configs name them by class (`parser_name`,
 | `DPOPairsParser` | `parsers/sft/dpo_pairs_parser.py` | Chosen/rejected pairs for the DPO workflow |
 
 `datasets/reaction_templates.json` holds the reaction templates used for synthetic forward
-enumeration (the synthetic benchmark of an earlier draft; not in the ICLR 2027 paper). `parsers/base.py` and `prompts/base.py` define the `Parser` and `Prompt`
+enumeration (the synthetic benchmark of an earlier draft; not in the paper). `parsers/base.py` and `prompts/base.py` define the `Parser` and `Prompt`
 interfaces (`load_reactions`/`parse_reaction`, `get_system_prompt`/`get_task_template`).

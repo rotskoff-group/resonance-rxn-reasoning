@@ -43,7 +43,7 @@ def test_answer_inside_unclosed_thinking_counts():
 def test_download_places_files_at_run_dir_paths(tmp_path, monkeypatch):
     import resonance.download as download
     repo = tmp_path / "repo"
-    src = repo / "iclr2027/raw/s3_8b/outputs/benchmark/results.jsonl"
+    src = repo / "v1/raw/s3_8b/outputs/benchmark/results.jsonl"
     src.parent.mkdir(parents=True)
     src.write_text("{}\n")
     root = tmp_path / "data"

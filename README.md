@@ -1,7 +1,7 @@
 # Resonance
 
-Code, models and data for **Distillation, Self-Training, and the Fragility of Learned Chemical
-Reasoning** (ICLR 2027).
+Code, models and data for the preprint **Distillation, Self-Training, and the Fragility of Learned
+Chemical Reasoning**.
 
 Resonance trains open-weight models to predict the products of chemical reactions. Each
 reaction is given as SMILES, and the model reasons step by step before answering. A teacher
@@ -26,7 +26,7 @@ New to the project? Start with [docs/GLOSSARY.md](docs/GLOSSARY.md), then this p
 | | Where | What |
 |---|---|---|
 | Models | [Hugging Face collection](https://huggingface.co/anaghaa) | All 8 checkpoints in the paper: `Resonance-{8B,27B}-{S1,S2,S3,skip-S2}`. Each is a merged, standalone model; stages trained with LoRA (8B S3 and skip-S2, every 27B stage after S1) also ship their adapter. |
-| Data | [`anaghaa/resonance`](https://huggingface.co/datasets/anaghaa/resonance) (under `iclr2027/`) | USPTO-50k split and corrected class labels, the 40,000 Kimi K3 teacher traces, every S2 and S3 training set, every model's test predictions, and the reasoning-analysis samples. See [docs/DATA.md](docs/DATA.md). |
+| Data | [`anaghaa/resonance`](https://huggingface.co/datasets/anaghaa/resonance) (under `v1/`) | USPTO-50k split and corrected class labels, the 40,000 Kimi K3 teacher traces, every S2 and S3 training set, every model's test predictions, and the reasoning-analysis samples. See [docs/DATA.md](docs/DATA.md). |
 | Code | this repository | Training, sampling, evaluation, the reasoning analysis and every figure in the paper. |
 
 Model ids are listed in `src/resonance/release/artifacts.py`.
@@ -136,16 +136,16 @@ In short:
 
 `src/resonance/pipelines/forward_enum`, `synthetic_data` and `synthetic_ood` build a synthetic
 out-of-distribution benchmark from an earlier draft of this work. It is **not** part of the
-ICLR 2027 paper.
+paper.
 
 ## Citation
 
 ```bibtex
-@inproceedings{aneesh2027resonance,
-  title     = {Distillation, Self-Training, and the Fragility of Learned Chemical Reasoning},
-  author    = {Aneesh, Anagha and Ibarraran, Sebastian and Hu, Frank and Liu, Jason and Rotskoff, Grant},
-  booktitle = {International Conference on Learning Representations},
-  year      = {2027}
+@misc{aneesh2026resonance,
+  title  = {Distillation, Self-Training, and the Fragility of Learned Chemical Reasoning},
+  author = {Aneesh, Anagha and Ibarraran, Sebastian and Hu, Frank and Liu, Jason and Rotskoff, Grant},
+  year   = {2026},
+  note   = {Preprint}
 }
 ```
 

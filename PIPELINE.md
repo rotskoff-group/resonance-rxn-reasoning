@@ -21,7 +21,7 @@ reaction-class labels ──► per-class analysis ──► Figs 2, 3, 7
 | `src/resonance/pipelines/uspto/` | USPTO-50k → forward-reaction json |
 | `src/resonance/pipelines/traces/` | Kimi K3 teacher traces: frozen prompts + fingerprint, endpoints, generation, corpus validation |
 | `src/resonance/pipelines/labels/` | Reaction-class labels for train and test, and the benzyl-ether correction for both (`relabel_classes`, `relabel_train`) |
-| `src/resonance/pipelines/{forward_enum,synthetic_data,synthetic_ood}/` | Synthetic out-of-distribution benchmark from an earlier draft; **not in the ICLR 2027 paper** |
+| `src/resonance/pipelines/{forward_enum,synthetic_data,synthetic_ood}/` | Synthetic out-of-distribution benchmark from an earlier draft; **not in the paper** |
 | `src/resonance/stages/qwen3_8b/` | 8B S1 → S2 → S3, each benchmarked (see its `README.md`) |
 | `src/resonance/stages/qwen3_8_27b/` | 27B S1 → S2 → S3 on Modal, base/S1 local evals, the skip-S2 stage ablation, synthetic S1 eval |
 | `src/resonance/stages/common.py` | Checkpoint checks, durable json/jsonl, answer extraction and canonical SMILES |

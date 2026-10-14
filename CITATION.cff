@@ -15,7 +15,7 @@ authors:
   - family-names: Rotskoff
     given-names: Grant
 preferred-citation:
-  type: conference-paper
+  type: generic
   title: "Distillation, Self-Training, and the Fragility of Learned Chemical Reasoning"
   authors:
     - family-names: Aneesh
@@ -28,5 +28,5 @@ preferred-citation:
       given-names: Jason
     - family-names: Rotskoff
       given-names: Grant
-  collection-title: "International Conference on Learning Representations (ICLR)"
-  year: 2027
+  year: 2026
+  notes: "Preprint"

@@ -5,7 +5,7 @@ One place for every repository id, so the README, the model and dataset cards an
 """
 
 DATASET_REPO = "anaghaa/resonance"
-PAPER = "iclr2027"   # every file of this paper sits under <PAPER>/ in DATASET_REPO
+RELEASE = "v1"   # every file of this release sits under <RELEASE>/ in DATASET_REPO; later releases add v2, ...
 
 # Paper name -> (Hub model repo, base model, what it is). The USPTO-50k test accuracy is the
 # paper's (appendix tables "Paired tests between stages" and "Skip-S2 ablation").

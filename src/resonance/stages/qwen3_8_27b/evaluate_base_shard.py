@@ -9,12 +9,10 @@ import fcntl
 import json
 import os
 import subprocess
-import sys
 import time
-from pathlib import Path
 
-from resonance.stages.common import checkpoint
 from resonance.paths import run_dir
+from resonance.stages.common import checkpoint
 from resonance.stages.qwen3_8_27b.config import PROMPTS, STAGE_DIR, traces_path
 from resonance.stages.qwen3_8_27b.evaluate_local import BENCHMARK_BIN, ROOT, benchmark_env
 

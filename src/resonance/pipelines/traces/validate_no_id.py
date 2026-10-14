@@ -7,7 +7,9 @@ import hashlib
 import json
 import sys
 from pathlib import Path
+
 from resonance.pipelines.traces.prompts_stage1 import FINGERPRINT
+
 
 def validate(path):
     raw = Path(path).read_bytes()

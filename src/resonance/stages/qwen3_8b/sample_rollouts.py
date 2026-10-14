@@ -171,7 +171,7 @@ def main():
     out_path.parent.mkdir(parents=True, exist_ok=True)
     written = 0
     with open(out_path, "w") as out_f:
-        for record, output in zip(records, outputs):
+        for record, output in zip(records, outputs, strict=True):
             responses = [o.text for o in output.outputs]
             row = {
                 "row_idx":           record["row_idx"],

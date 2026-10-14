@@ -13,8 +13,16 @@ from dataclasses import dataclass
 from pathlib import Path
 from types import ModuleType
 
-from . import (class_progression, feedback_delta, intervention_scatter, plurality,
-               stage_ablation, staged_accuracy, style)
+from . import (
+    class_progression,
+    feedback_delta,
+    intervention_scatter,
+    plurality,
+    stage_ablation,
+    stage_waterfall,
+    staged_accuracy,
+    style,
+)
 from .schema import DataError, load
 
 
@@ -33,6 +41,7 @@ FIGURES = [
     Figure("feedback_delta", feedback_delta, "Accuracy change per feedback condition (dots)"),
     Figure("plurality", plurality, "Plurality@k by reaction class"),
     Figure("stage_ablation", stage_ablation, "Per-family stage-ablation heatmap"),
+    Figure("stage_waterfall", stage_waterfall, "3-D waterfall: accuracy by stage and family"),
 ]
 
 
@@ -43,7 +52,7 @@ def render(figure, data_dir, out_dir, formats):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap = argparse.ArgumentParser(description=str(__doc__).splitlines()[0])
     ap.add_argument("--data-dir", type=Path)
     ap.add_argument("--out-dir", type=Path)
     ap.add_argument("--only", nargs="+", help="figure (or --map file) names to render")

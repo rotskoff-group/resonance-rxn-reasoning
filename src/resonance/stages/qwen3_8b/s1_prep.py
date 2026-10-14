@@ -19,7 +19,6 @@ length report warns when examples exceed --max-length, since silent truncation w
 """
 import argparse
 import json
-import sys
 from pathlib import Path
 
 from datasets import Dataset

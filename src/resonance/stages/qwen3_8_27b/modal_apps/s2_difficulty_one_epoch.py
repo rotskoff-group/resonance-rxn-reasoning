@@ -9,10 +9,15 @@ import pathlib
 
 import modal
 
-from resonance.paths import run_dir
 from resonance.stages.qwen3_8_27b.config import (
-    ABLATION_VOLUME, APP_ABLATION, APP_EVAL, APP_PIPELINE, APP_RESUME, APP_S1, APP_S2, APP_S3,
-    CONTAINER_ENV, PIPELINE_VOLUME, PROMPTS, RUN_ID, S1_VOLUME, pipeline_root, traces_path, with_code)
+    APP_S2,
+    CONTAINER_ENV,
+    PIPELINE_VOLUME,
+    S1_VOLUME,
+    pipeline_root,
+    traces_path,
+    with_code,
+)
 
 APP_NAME = APP_S2
 ROOT = pipeline_root()
@@ -24,7 +29,8 @@ VARIANT = 's2-v5-difficulty-mix-1ep'
 app = modal.App(APP_NAME)
 data_volume = modal.Volume.from_name(VOLUME)
 s1_volume = modal.Volume.from_name(S1_VOLUME)
-mounts = {'/pipeline': data_volume, '/s1': s1_volume}
+mounts: dict[str | pathlib.PurePosixPath, modal.Volume | modal.CloudBucketMount] = (
+    {'/pipeline': data_volume, '/s1': s1_volume})
 train_image = (modal.Image.from_registry(
         'nvidia/cuda:12.6.0-devel-ubuntu22.04', add_python='3.11')
     .entrypoint([]).apt_install('build-essential', 'git')
@@ -69,6 +75,7 @@ def subprocess_run(cmd, timeout, env=None):
 @app.function(image=train_image, volumes=mounts, cpu=2, memory=8192, timeout=900, retries=0)
 def validate_data(run_id: str, manifest_sha256: str):
     import hashlib
+
     from datasets import load_from_disk
     data_volume.reload()
     _, data_root, _ = paths(run_id)
@@ -93,8 +100,8 @@ def validate_data(run_id: str, manifest_sha256: str):
               timeout=24*3600, retries=0)
 def train(run_id: str, segment: int = 0):
     import os
-    import sys
     import time
+
     from resonance.stages.common import checkpoint, write_json
 
     node_rank = 0
@@ -142,7 +149,7 @@ def train(run_id: str, segment: int = 0):
               timeout=3*3600, retries=0)
 def merge(run_id: str):
     import subprocess
-    import sys
+
     from resonance.stages.common import checkpoint, write_json
 
     data_volume.reload()
@@ -165,7 +172,6 @@ def merge(run_id: str):
 
 @app.local_entrypoint()
 def main():
-    import sys
     from resonance.pipelines.traces.validate_no_id import validate
 
     source = traces_path()

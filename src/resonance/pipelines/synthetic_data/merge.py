@@ -6,8 +6,8 @@ import hashlib
 import json
 import random
 from collections import defaultdict
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator
 
 from loguru import logger
 

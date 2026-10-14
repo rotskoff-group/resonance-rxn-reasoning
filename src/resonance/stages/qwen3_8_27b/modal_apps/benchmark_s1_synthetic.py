@@ -3,17 +3,24 @@
 Ported from run_dir('synthetic_s2_27b')/modal/benchmark_s1_synthetic.py (the 27B S1 row of the
 synthetic OOD evaluation). Local reports land in run_dir('synthetic_s2_27b')/outputs/
 s1-synthetic-baseline/eval/<suite>, which resonance.pipelines.synthetic_ood.prepare hash-checks.
-Launch: python -m modal run --detach src/resonance/stages/qwen3_8_27b/modal_apps/benchmark_s1_synthetic.py [--check-only]
+Launch: python -m modal run --detach \
+        src/resonance/stages/qwen3_8_27b/modal_apps/benchmark_s1_synthetic.py [--check-only]
 """
 import json
 import pathlib
 
 import modal
 
-
 from resonance.paths import run_dir
-from resonance.stages.qwen3_8_27b.config import (APP_S1_SYNTHETIC, CONTAINER_ENV, PROMPTS, RUN_ID as S1_RUN_ID,
-                                                 S1_VOLUME, SYNTHETIC_VOLUME, with_code)
+from resonance.stages.qwen3_8_27b.config import (
+    APP_S1_SYNTHETIC,
+    CONTAINER_ENV,
+    PROMPTS,
+    S1_VOLUME,
+    SYNTHETIC_VOLUME,
+    with_code,
+)
+from resonance.stages.qwen3_8_27b.config import RUN_ID as S1_RUN_ID
 
 ROOT = run_dir("synthetic_s2_27b")
 RUN_ID = "synthetic-alpha0-60k"
@@ -24,7 +31,8 @@ SHARDS = 4
 app = modal.App(APP_S1_SYNTHETIC)
 volume = modal.Volume.from_name(VOLUME, create_if_missing=False)
 s1_volume = modal.Volume.from_name(S1_VOLUME, create_if_missing=False)
-mounts = {"/pipeline": volume, "/s1": s1_volume}
+mounts: dict[str | pathlib.PurePosixPath, modal.Volume | modal.CloudBucketMount] = (
+    {"/pipeline": volume, "/s1": s1_volume})
 
 image = (modal.Image.from_registry(
         "nvidia/cuda:12.8.1-cudnn-devel-ubuntu22.04", add_python="3.11")
@@ -45,7 +53,7 @@ def paths():
 @app.function(image=image, volumes=mounts, cpu=2, memory=8192, timeout=900, retries=0)
 def initialize(suite: str, test_raw: bytes, prompts_raw: bytes, labels_raw: bytes, source_info: dict):
     import hashlib
-    import sys
+
     from resonance.stages.common import checkpoint, write_json
 
     volume.reload()
@@ -82,7 +90,7 @@ def benchmark_shard(task: tuple):
     suite, shard = task
     import os
     import subprocess
-    import sys
+
     from resonance.stages.common import checkpoint
 
     volume.reload()
@@ -106,8 +114,8 @@ def benchmark_shard(task: tuple):
 @app.function(image=image, volumes=mounts, cpu=4, memory=16384,
               timeout=1800, retries=0)
 def evaluate(suite: str):
-    import sys
     from collections import defaultdict
+
     from resonance.stages.common import iter_jsonl, write_json
 
     volume.reload()

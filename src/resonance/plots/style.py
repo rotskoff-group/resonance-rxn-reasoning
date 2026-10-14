@@ -124,23 +124,28 @@ def series_style(i, item):
 
 
 def annotated_heatmap(ax, values, cmap, norm, xlabels, ylabels=None, fmt="{:.0f}",
-                      stars=None, rotate=40):
-    """Heatmap with a value in every cell; NaN cells render as a grey dash."""
+                      stars=None, rotate=40, annot_size=None, tick_size=None):
+    """Heatmap with a value in every cell; NaN cells render as a grey dash.
+
+    annot_size / tick_size override the cell-text and tick-label font sizes.
+    """
+    annot_size = FS_ANNOT - 1.5 if annot_size is None else annot_size
+    tick_size = FS_TICK - 0.5 if tick_size is None else tick_size
     ax.imshow(np.ma.masked_invalid(values), cmap=cmap, norm=norm, aspect="auto",
               interpolation="nearest")
     diverging = isinstance(norm, mpl.colors.TwoSlopeNorm)
     for (r, c), v in np.ndenumerate(values):
         if np.isnan(v):
-            ax.text(c, r, "–", ha="center", va="center", fontsize=FS_ANNOT - 1.5, color="#9a9a9a")
+            ax.text(c, r, "–", ha="center", va="center", fontsize=annot_size, color="#9a9a9a")
             continue
         dark = abs(norm(v) - 0.5) > 0.35 if diverging else norm(v) > 0.6
         text = fmt.format(v) + ("*" if stars is not None and stars[r, c] else "")
-        ax.text(c, r, text, ha="center", va="center", fontsize=FS_ANNOT - 1.5,
+        ax.text(c, r, text, ha="center", va="center", fontsize=annot_size,
                 color="white" if dark else BLACK)
     ax.set_xticks(np.arange(values.shape[1]), xlabels, rotation=rotate,
                   ha="right" if rotate else "center", rotation_mode="anchor",
-                  fontsize=FS_TICK - 0.5)
-    ax.set_yticks(np.arange(values.shape[0]), ylabels or [])
+                  fontsize=tick_size, color="black")
+    ax.set_yticks(np.arange(values.shape[0]), ylabels or [], fontsize=tick_size, color="black")
     ax.tick_params(axis="both", length=0)
     ax.set_xticks(np.arange(-0.5, values.shape[1], 1), minor=True)
     ax.set_yticks(np.arange(-0.5, values.shape[0], 1), minor=True)

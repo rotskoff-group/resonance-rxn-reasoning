@@ -10,9 +10,10 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-import modal
-from resonance.stages.common import checkpoint, sha256, write_json
 
+import modal
+
+from resonance.stages.common import checkpoint, sha256, write_json
 from resonance.stages.qwen3_8_27b.config import PIPELINE_VOLUME, S1_VOLUME, pipeline_root, traces_path
 
 ROOT = pipeline_root()

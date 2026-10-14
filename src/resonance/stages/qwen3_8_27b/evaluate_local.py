@@ -11,12 +11,10 @@ import json
 import os
 import shutil
 import subprocess
-import sys
 import time
-from pathlib import Path
-from resonance.stages.common import checkpoint, write_json
 
 from resonance.paths import run_dir
+from resonance.stages.common import checkpoint, write_json
 from resonance.stages.qwen3_8_27b.config import PROMPTS, SRC, STAGE_DIR, benchmark_bin, pipeline_root, traces_path
 
 ROOT = pipeline_root()

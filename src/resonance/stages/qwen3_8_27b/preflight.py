@@ -4,13 +4,20 @@ Ported from run_dir('pipeline_27b')/scripts/preflight.py. CLI: python preflight.
 """
 import math
 import tempfile
+from typing import Any, cast
+
 import torch
 from datasets import Dataset
+from peft import LoraConfig
 from tokenizers import Tokenizer
 from tokenizers.models import WordLevel
-from transformers import PreTrainedTokenizerFast, Qwen3_5Config, Qwen3_5ForConditionalGeneration
-from peft import LoraConfig
+from transformers import (
+    PreTrainedTokenizerFast,
+    Qwen3_5Config,  # ty: ignore[unresolved-import]  (transformers 5.x, Modal image)
+    Qwen3_5ForConditionalGeneration,  # ty: ignore[unresolved-import]  (transformers 5.x, Modal image)
+)
 from trl import DPOConfig
+
 from resonance.stages.qwen3_8_27b.dpo_tokens import TokenDPOTrainer
 
 if __name__ == '__main__':
@@ -36,11 +43,12 @@ if __name__ == '__main__':
         trainer = TokenDPOTrainer(model=model, ref_model=None, args=args, train_dataset=ds,
             processing_class=tokenizer, peft_config=LoraConfig(r=4,lora_alpha=8,
                 target_modules=['q_proj','v_proj'], task_type='CAUSAL_LM'))
-        before = {n:p.detach().clone() for n,p in trainer.model.named_parameters() if p.requires_grad}
+        peft_model = cast(Any, trainer.model)   # the PeftModel the trainer wrapped
+        before = {n:p.detach().clone() for n,p in peft_model.named_parameters() if p.requires_grad}
         result = trainer.train()
         assert math.isfinite(result.training_loss)
-        assert any(not torch.equal(before[n], p) for n,p in trainer.model.named_parameters() if n in before)
+        assert any(not torch.equal(before[n], p) for n,p in peft_model.named_parameters() if n in before)
         trainer.save_model(tmp+'/adapter')
-        merged = trainer.model.merge_and_unload(safe_merge=True)
+        merged = peft_model.merge_and_unload(safe_merge=True)
         assert merged(input_ids=torch.tensor([[5,6,7]])).logits.shape == (1,3,128)
     print('PREFLIGHT_OK: finite DPO+NLL update, adapter changed, reference precompute and merge passed')

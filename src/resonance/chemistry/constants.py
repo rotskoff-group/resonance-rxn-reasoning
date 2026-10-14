@@ -68,7 +68,7 @@ TRACKED_ELEMENTS: Final[list[str]] = ["C", "N", "O", "S", "F", "Cl", "Br"]
 
 # HETEROPOOL is a list of common inert alkyl and aryl substructres, some
 # of which contain heteroatoms
-# The R_CARBON_POOL extends the R_HETERO_POOL by including additional substructures 
+# The R_CARBON_POOL extends the R_HETERO_POOL by including additional substructures
 # that contain carbon atoms.
 R_HETERO_POOL: Final[list[str]] = [
     "C",

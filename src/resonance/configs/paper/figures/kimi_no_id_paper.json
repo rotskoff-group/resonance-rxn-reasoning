@@ -7,28 +7,31 @@
       "conditions_dir": "${run_dir:paper_figures}/runs/per_reaction_seed/full/outputs/t06_kimi_s1",
       "fresh": "${run_dir:paper_figures}/runs/per_reaction_seed/full/outputs/fresh_t06/kimi_s1/C5_fresh.jsonl",
       "eval": "${run_dir:paper_figures}/runs/per_reaction_seed/full/data/eval_kimi_s1.json",
-      "tokenizer": "${run_dir:traces}/outputs/model_0a_no_reaction_id/tokenizer.json"
+      "tokenizer": "${run_dir:traces}/outputs/model_0a_no_reaction_id/tokenizer.json",
+      "eight_rollouts_dir": "${run_dir:paper_figures}/runs/per_reaction_seed_feedback8/full/outputs/t06_kimi_s1"
     },
     "S2": {
       "tag": "kimi_s2",
       "conditions_dir": "${run_dir:paper_figures}/runs/per_reaction_seed/full/outputs/t06_kimi_s2",
       "fresh": "${run_dir:paper_figures}/runs/per_reaction_seed/full/outputs/fresh_t06/kimi_s2/C5_fresh.jsonl",
       "eval": "${run_dir:paper_figures}/runs/per_reaction_seed/full/data/eval_kimi_s2.json",
-      "tokenizer": "${run_dir:s2_8b}/outputs/model/checkpoint-2229/tokenizer.json"
+      "tokenizer": "${run_dir:s2_8b}/outputs/model/checkpoint-2229/tokenizer.json",
+      "eight_rollouts_dir": "${run_dir:paper_figures}/runs/per_reaction_seed_feedback8/full/outputs/t06_kimi_s2"
     },
     "S3": {
       "tag": "kimi_s3",
       "conditions_dir": "${run_dir:paper_figures}/runs/per_reaction_seed/full/outputs/t06_kimi_s3",
       "fresh": "${run_dir:paper_figures}/runs/per_reaction_seed/full/outputs/fresh_t06/kimi_s3/C5_fresh.jsonl",
       "eval": "${run_dir:paper_figures}/runs/per_reaction_seed/full/data/eval_kimi_s3.json",
-      "tokenizer": "${run_dir:s3_8b}/outputs/benchmark_model/tokenizer.json"
+      "tokenizer": "${run_dir:s3_8b}/outputs/benchmark_model/tokenizer.json",
+      "eight_rollouts_dir": "${run_dir:paper_figures}/runs/per_reaction_seed_feedback8/full/outputs/t06_kimi_s3"
     }
   },
   "figures": {
     "length_prompts": {
       "baseline": "C5_fresh",
       "plot_file": "Fig_4",
-      "error_bars": true,
+      "error_bars": "draws",
       "conditions": [
         [
           "B2_commit_first",
@@ -50,8 +53,8 @@
         ]
       ],
       "plot": {
-        "xlabel": "$\\Delta$Acc vs fresh (pp)",
-        "ylabel": "Reasoning tokens (avg.)",
+        "xlabel": "Change in accuracy (pp)",
+        "ylabel": "Avg. reasoning tokens",
         "figsize": [
           7.5,
           3.4
@@ -86,13 +89,13 @@
       ],
       "plot": {
         "bound": 10,
-        "xlabel": "$\\Delta$Acc vs neutral review (pp)",
+        "xlabel": "Change in accuracy (pp)",
         "figsize": [
           7.5,
           2.7
         ],
         "error_z": 1.96,
-        "marker_scale": 0.7
+        "marker_scale": 1.0
       }
     }
   },
@@ -107,43 +110,63 @@
     ],
     "classes": [
       [
-        "heteroatom alkylation/arylation",
-        "Heteroatom alk./aryl.",
-        "#104281"
-      ],
-      [
-        "protection chemistry",
-        "Protection chemistry",
-        "#3987e5"
+        "heteroatom_alkylation_arylation",
+        "Alk./aryl.",
+        "#1f5fa8"
       ],
       [
         "acylation",
-        "Acylation",
-        "#86b6ef"
+        "Acyl.",
+        "#f28e2b"
       ],
       [
-        "C-C bond formation",
-        "C-C bond formation",
-        "#f0a3a2"
+        "deprotections",
+        "Deprot.",
+        "#7b3fa0"
       ],
       [
-        "redox",
-        "Redox",
-        "#8a8981"
+        "cc_bond_formation",
+        "C–C",
+        "#e377c2"
       ],
       [
-        "FG changes",
-        "FG",
-        "#af9e73"
+        "reductions",
+        "Red.",
+        "#8a8a1e"
       ],
       [
-        "heterocycle formation",
-        "Heterocycle formation",
-        "#e34948"
+        "unclassified",
+        "Unclass.",
+        "#7f7f7f"
+      ],
+      [
+        "fgi",
+        "FGI",
+        "#a0522d"
+      ],
+      [
+        "protections",
+        "Prot.",
+        "#c9a100"
+      ],
+      [
+        "heterocycle_formation",
+        "Heterocyc.",
+        "#2a9d8f"
+      ],
+      [
+        "oxidations",
+        "Ox.",
+        "#d62728"
+      ],
+      [
+        "fga",
+        "FGA",
+        "#17becf"
       ]
     ],
     "plot": {
-      "ylabel": "Plurality@$k$ Acc (%)",
+      "ylabel": "Plurality@$k$ acc. (%)",
       "ylabel_size_offset": -1.5,
       "xlabel": "Samples per reaction ($k$)",
       "ylim": [
@@ -161,33 +184,10 @@
         7.5,
         3.3
       ],
-      "legend_n": false
+      "legend_n": false,
+      "legend_size_offset": 0,
+      "legend_ncol": 6
     },
-    "families": {
-      "heteroatom alkylation/arylation": [
-        "heteroatom_alkylation_arylation"
-      ],
-      "protection chemistry": [
-        "protections",
-        "deprotections"
-      ],
-      "acylation": [
-        "acylation"
-      ],
-      "C-C bond formation": [
-        "cc_bond_formation"
-      ],
-      "redox": [
-        "reductions",
-        "oxidations"
-      ],
-      "FG changes": [
-        "fgi",
-        "fga"
-      ],
-      "heterocycle formation": [
-        "heterocycle_formation"
-      ]
-    }
+    "min_class_n": 0
   }
 }

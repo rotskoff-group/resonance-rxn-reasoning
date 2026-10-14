@@ -5,21 +5,30 @@ Ported from run_dir('metareasoning')/no_id/scripts/prepare_eval.py. Writes
 
     python -m resonance.paper.prepare_eval [--config metareasoning_eval.json] [--out <dir>]
 """
-import argparse,hashlib,json
+import argparse
+import hashlib
+import json
 from pathlib import Path
+
 from transformers import AutoTokenizer
+
 from resonance.paper import config as paper_config
+
 if __name__ == '__main__':
-    p=argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    p=argparse.ArgumentParser(description=str(__doc__).splitlines()[0])
     p.add_argument('--config',default='metareasoning_eval.json',help='path, or a name in configs/paper/figures')
     p.add_argument('--out',type=Path,help="default: the config's run_dir")
     a=p.parse_args()
-    c=paper_config.load(a.config); run=a.out or Path(c['run_dir']); (run/'data').mkdir(parents=True,exist_ok=True)
-    test=json.load(open(c['test_json'])); labels=json.load(open(c['labels_test']))['labels']
+    c=paper_config.load(a.config)
+    run=a.out or Path(c['run_dir'])
+    (run/'data').mkdir(parents=True,exist_ok=True)
+    test=json.load(open(c['test_json']))
+    labels=json.load(open(c['labels_test']))['labels']
     benches={}
     audit={'name':c['name'],'models':{},'n':len(test)}
     for tag,spec in c['models'].items():
-        rows=list(map(json.loads,open(spec['benchmark']))); bench={r['idx']:r for r in rows}
+        rows=list(map(json.loads,open(spec['benchmark'])))
+        bench={r['idx']:r for r in rows}
         assert len(bench)==len(rows)==len(test) and set(bench)==set(range(len(test)))
         tok=AutoTokenizer.from_pretrained(spec['path'],local_files_only=True)
         rendered=tok.apply_chat_template([{'role':'user','content':'test'}],tokenize=False,add_generation_prompt=True)

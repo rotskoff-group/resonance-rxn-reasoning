@@ -5,6 +5,7 @@ Each record: {prompt: list[dict], chosen: list[dict], rejected: list[dict]}
 """
 
 import json
+
 from ..base import Parser
 
 

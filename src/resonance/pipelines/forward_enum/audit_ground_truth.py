@@ -11,10 +11,10 @@ import json
 from itertools import permutations
 from pathlib import Path
 
-from rdkit import Chem, RDLogger
-from rdkit.Chem import AllChem
+from rdkit import Chem, rdBase
+from rdkit.Chem import rdChemReactions
 
-RDLogger.DisableLog("rdApp.*")
+rdBase.DisableLog("rdApp.*")
 
 TEMPLATES = Path(__file__).resolve().parents[2] / "data" / "datasets" / "reaction_templates.json"
 
@@ -32,7 +32,7 @@ def load_templates():
     for t in json.load(open(TEMPLATES)):
         names[t["id"]] = t["name"]
         try:
-            rxn = AllChem.ReactionFromSmarts(t["smarts"])
+            rxn = rdChemReactions.ReactionFromSmarts(t["smarts"])
             rxn.Initialize()
             rxns[t["id"]] = rxn
         except Exception:

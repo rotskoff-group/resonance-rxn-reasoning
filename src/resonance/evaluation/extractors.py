@@ -8,11 +8,11 @@ in ``TASK_PARSERS`` at the bottom of this module.
 """
 
 import re
+
 from rdkit import Chem
-from typing import Optional
 
 
-def extract_forward_rxn(text: str) -> Optional[str]:
+def extract_forward_rxn(text: str) -> str | None:
     """Extract the SMILES/IUPAC answer from the model output.
 
     Tries in order:
@@ -58,7 +58,7 @@ def extract_forward_rxn(text: str) -> Optional[str]:
     return stripped if stripped else None
 
 
-def _canonicalize(smiles: str) -> Optional[str]:
+def _canonicalize(smiles: str) -> str | None:
     """Return the RDKit canonical SMILES, or None if the string is invalid."""
     try:
         mol = Chem.MolFromSmiles(smiles)
@@ -70,7 +70,7 @@ def _canonicalize(smiles: str) -> Optional[str]:
 
 
 def match_forward_rxn(
-    predicted: str, ground_truth: str, answer_type: Optional[str]
+    predicted: str, ground_truth: str, answer_type: str | None
 ) -> bool:
     """Compare predicted and ground-truth forward-reaction answers.
 
@@ -100,7 +100,7 @@ def match_forward_rxn(
     return predicted.lower() == str(ground_truth).strip().lower()
 
 
-def _extract_boxed_nested(text: str) -> Optional[str]:
+def _extract_boxed_nested(text: str) -> str | None:
     """Extract last \\boxed{} content, handling nested braces."""
     results = []
     i = 0
@@ -124,7 +124,7 @@ def _extract_boxed_nested(text: str) -> Optional[str]:
     return results[-1].strip() if results else None
 
 
-def extract_answer_tag(text: str) -> Optional[str]:
+def extract_answer_tag(text: str) -> str | None:
     """Extract the last <answer>...</answer> tag, falling back to \\boxed{}."""
     matches = re.findall(r"<answer>\s*(.*?)\s*</answer>", text, re.DOTALL)
     if matches:
@@ -133,7 +133,7 @@ def extract_answer_tag(text: str) -> Optional[str]:
 
 
 def match_mol_property(
-    predicted: str, ground_truth: str, answer_type: Optional[str]
+    predicted: str, ground_truth: str, answer_type: str | None
 ) -> bool:
     """Match predicted vs ground_truth for molecular property question types."""
     if answer_type in ("integer", "int", "numeric", "number"):
@@ -152,7 +152,7 @@ def _normalize_molecular_formula(formula: str) -> str:
     return result.strip()
 
 
-def extract_molecular_formula(text: str) -> Optional[str]:
+def extract_molecular_formula(text: str) -> str | None:
     raw = extract_answer_tag(text)
     if raw is None:
         return None
@@ -160,7 +160,7 @@ def extract_molecular_formula(text: str) -> Optional[str]:
 
 
 def match_molecular_formula(
-    predicted: str, ground_truth: str, answer_type: Optional[str]
+    predicted: str, ground_truth: str, answer_type: str | None
 ) -> bool:
     return predicted.strip() == str(ground_truth).strip()
 
@@ -178,7 +178,7 @@ _MOL_PROPERTY_TYPES = (
     "stereocenters",
 )
 
-def extract_retro_enum(text: str) -> Optional[str]:
+def extract_retro_enum(text: str) -> str | None:
     """Extract the reactant SMILES answer from a retrosynthesis response.
 
     Tries in order:
@@ -212,7 +212,7 @@ def extract_retro_enum(text: str) -> Optional[str]:
     return stripped if stripped else None
 
 
-def _canonicalize_set(smiles_str: str) -> Optional[frozenset]:
+def _canonicalize_set(smiles_str: str) -> frozenset | None:
     """Split a dot-joined or JSON-array SMILES string and return a frozenset of canonical SMILES.
 
     Accepts both dot-separated format (``SMILES1.SMILES2``) and JSON array
@@ -246,7 +246,7 @@ def _canonicalize_set(smiles_str: str) -> Optional[frozenset]:
 
 
 def match_retro_enum(
-    predicted: str, ground_truth: str, answer_type: Optional[str]
+    predicted: str, ground_truth: str, answer_type: str | None
 ) -> bool:
     """Exact set-match of reactant SMILES after RDKit canonicalization.
 
@@ -261,7 +261,7 @@ def match_retro_enum(
 
 
 
-def extract_retro_uspto(text: str) -> Optional[str]:
+def extract_retro_uspto(text: str) -> str | None:
     """Extract the reactant SMILES for the USPTO-50K retro task.
 
     Deliberately permissive about the wrapper, so that the number measured is

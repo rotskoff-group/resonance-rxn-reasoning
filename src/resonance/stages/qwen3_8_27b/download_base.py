@@ -4,12 +4,10 @@ Ported from run_dir('pipeline_27b')/scripts/download_base.py.
 CLI: python -m resonance.stages.qwen3_8_27b.download_base
 """
 import json
-import sys
-from pathlib import Path
 
 from huggingface_hub import snapshot_download
-from resonance.stages.common import checkpoint, write_json
 
+from resonance.stages.common import checkpoint, write_json
 from resonance.stages.qwen3_8_27b.config import BASE_MODEL, BASE_REVISION, pipeline_root, traces_path
 
 ROOT = pipeline_root()

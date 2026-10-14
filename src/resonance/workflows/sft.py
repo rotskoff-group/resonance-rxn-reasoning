@@ -7,12 +7,11 @@ This script loads a precomputed dataset (created by precompute.py) and trains a 
 import math
 import os
 import time
+from typing import Any, cast
 
 import hydra
 import wandb
-from resonance.training.instantiators import instantiate_collator
-from resonance.utils import convert_dtype_in_kwargs
-from datasets import load_from_disk, concatenate_datasets, Dataset
+from datasets import Dataset, concatenate_datasets, load_from_disk
 from loguru import logger
 from omegaconf import DictConfig, ListConfig, OmegaConf
 from transformers import (
@@ -24,6 +23,9 @@ from transformers import (
     TrainingArguments,
 )
 from trl import SFTConfig, SFTTrainer
+
+from resonance.training.instantiators import instantiate_collator
+from resonance.utils import convert_dtype_in_kwargs
 
 
 class PerplexityCallback(TrainerCallback):
@@ -203,7 +205,7 @@ def main(cfg: DictConfig) -> None:
         peft_config=peft_config,
     )
     if peft_config is not None:
-        trainer.model.print_trainable_parameters()
+        cast(Any, trainer.model).print_trainable_parameters()
 
     # Train the model
     logger.info("Starting training...")

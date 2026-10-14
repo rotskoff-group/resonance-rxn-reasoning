@@ -43,7 +43,7 @@ def plot(data):
     fig, axes = plt.subplots(1, len(stages), sharex=True, sharey=True, layout="constrained",
                              figsize=data.get("figsize", (style.TEXTWIDTH, 0.36 * style.TEXTWIDTH)))
     axes = [axes] if len(stages) == 1 else list(axes)
-    for ax, stage in zip(axes, stages):
+    for ax, stage in zip(axes, stages, strict=True):
         ax.axvline(0, color=style.ZERO_LINE, lw=1.0, ls="--", zorder=1)
         for k, cond in enumerate(conditions):
             p = points.get((stage, cond["id"]))

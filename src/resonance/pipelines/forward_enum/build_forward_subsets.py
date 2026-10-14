@@ -27,11 +27,11 @@ CLI: python -m resonance.pipelines.forward_enum.build_forward_subsets [--run-dir
 
 from __future__ import annotations
 
+import argparse
 import gzip
 import json
 import os
 import random
-import argparse
 import subprocess
 import time
 from collections import defaultdict
@@ -52,7 +52,7 @@ SEED = 42
 TID_KEY = b'"template_id":'
 SPLITS = ("train", "val", "test")
 
-_RXNS = None
+_RXNS: dict | None = None
 
 
 def log(m):
@@ -83,6 +83,7 @@ def _init():
 def check(line_bytes):
     """-> raw line if the template emits exactly one product and it is the recorded one."""
     rec = json.loads(line_bytes)
+    assert _RXNS is not None, "init() loads the templates in every worker"
     prods, fired = forward_products(_RXNS.get(rec["template_id"]), rec["reactant_smiles"])
     gt = canon(rec["product_smiles"])
     if fired and gt in prods and len(prods) == 1:
@@ -118,6 +119,7 @@ def main() -> None:
     t0 = time.time()
     for src in SOURCES:
         proc = subprocess.Popen(["zcat", str(src)], stdout=subprocess.PIPE, bufsize=1 << 20)
+        assert proc.stdout is not None
         for line in proc.stdout:
             if line == b"\n":
                 continue

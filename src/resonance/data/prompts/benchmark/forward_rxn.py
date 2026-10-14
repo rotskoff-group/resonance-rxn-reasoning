@@ -146,20 +146,14 @@ If your proposed mechanism or product seems chemically implausible, revise your 
         else:
             icl_placeholder = ""
 
-        text = """{}Here are the {} of the starting material and reagent(s).
+        text = f"""{icl_placeholder}Here are the {rep_name} of the starting material and reagent(s).
 Starting material: {{starting_material}}
 Reagents: {{reagent_list}}
-{}
-Predict the single most likely primary product of the chemical reaction in {} format.
+{rep_note}
+Predict the single most likely primary product of the chemical reaction in {rep_name} format.
 The reaction should be chemically reasonable, following typical organic reactivity principles.
-{}
+{rep_instruction}
 Return the answer between <answer> and </answer> tags.
-""".format(
-            icl_placeholder,
-            rep_name,
-            rep_note,
-            rep_name,
-            rep_instruction,
-        )
+"""
 
         return text

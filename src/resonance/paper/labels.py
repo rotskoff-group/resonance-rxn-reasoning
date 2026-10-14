@@ -4,7 +4,8 @@ Ported from run_dir('notebooks')/scripts/corrected_labels.py.
 
 The classifier's benzyl_ether SMARTS matched benzyl alcohols; relabel_classes.py
 (resonance.analysis.metareasoning.frozen) re-derives the labels. 282/5,000 test
-reactions change class. Training-corpus labels are not corrected.
+reactions change class. The training labels get the same fix in
+resonance.pipelines.labels.relabel_train (2,247/40,000 change).
 """
 import json
 

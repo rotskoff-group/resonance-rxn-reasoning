@@ -3,19 +3,51 @@ name: CI
 on: [ push, pull_request ]
 
 jobs:
-  build:
+  lint:
     name: Lint and type check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7.1.6
+        with:
+          version: "latest"
+      - name: Install python
+        run: uv python install
+      # The locked environment pins ruff and ty (dev group), so CI and local runs agree.
+      - name: Install dependencies
+        run: uv sync --frozen
+      # Rules and exclusions: [tool.ruff] and [tool.ty] in pyproject.toml.
+      - name: Lint (pycodestyle, pyflakes, import order, bugbear, pyupgrade)
+        run: uv run ruff check --output-format=github .
+      - name: Type check
+        run: uv run ty check --output-format=github .
+      - name: Python files compile
+        run: uv run python -m compileall -q src
+
+  smoke:
+    name: Figures and CLIs (CPU)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v7.1.6
         with:
           version: "latest"
       - name: Install python
         run: uv python install
       - name: Install dependencies
-        run: uv sync --extra mapping
-      - name: lint
-        run: uv run ruff check --output-format=github .
-      - name: type check
-        run: uv run ty check --output-format=github .
+        run: uv sync --frozen
+      - name: Frozen metareasoning scripts match their manifest
+        run: uv run python -m resonance.analysis.metareasoning.verify
+      - name: Every plot renders from its example input
+        run: |
+          uv run python -m resonance.plots.examples --out /tmp/plot_examples
+          uv run python -m resonance.plots.run --data-dir /tmp/plot_examples --out-dir /tmp/plot_examples/figures
+      - name: Command-line entry points load
+        run: |
+          for m in resonance.predict resonance.download resonance.paper.run_all resonance.paper.classes \
+                   resonance.paper.backtrack resonance.paper.fig3 resonance.paper.fig7 resonance.paper.fig_appendix \
+                   resonance.release.replay resonance.pipelines.labels.relabel_train; do
+            uv run python -m "$m" --help > /dev/null
+          done
+      - name: Evaluation prompts match the recorded 8B and 27B prompts
+        run: uv run python -m pytest -q tests

@@ -15,12 +15,12 @@ import fcntl
 import hashlib
 import json
 import os
-from pathlib import Path
 import shutil
 import subprocess
 import time
+from pathlib import Path
 
-from datasets import load_from_disk
+from datasets import Dataset, load_from_disk
 
 from resonance.paths import run_dir
 from resonance.stages.common import checkpoint, write_json
@@ -36,6 +36,7 @@ def main():
     assert manifest['model'] == str(model)
     checkpoint(model)
     ds = load_from_disk(ROOT/'outputs/sft_dataset')
+    assert isinstance(ds, Dataset)
     assert len(ds) == manifest['accepted'] > 0
     assert ds._fingerprint == manifest['dataset_fingerprint']
     assert max(ds['num_tokens']) <= manifest['max_length'] == 1024

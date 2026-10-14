@@ -43,9 +43,10 @@ def main():
     ap.add_argument("--out", type=Path, default=OUT)
     a = ap.parse_args()
     EVAL, OUT = a.eval, a.out
+    from rdkit import Chem, rdBase
+
     from resonance.pipelines.labels import classify_reactions as C
-    from rdkit import Chem, RDLogger
-    RDLogger.DisableLog("rdApp.*")
+    rdBase.DisableLog("rdApp.*")
 
     ev = json.load(open(EVAL))
     rows = {}

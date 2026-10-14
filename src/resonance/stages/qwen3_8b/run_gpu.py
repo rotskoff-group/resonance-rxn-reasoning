@@ -12,9 +12,9 @@ import argparse
 import fcntl
 import json
 import os
-from pathlib import Path
 import subprocess
 import time
+
 from resonance.paths import run_dir
 from resonance.stages.common import checkpoint, write_json
 from resonance.stages.qwen3_8b._common import LOCK_DIR, PY, REPO, S1_MODEL, TRAIN_JSON, workflow_cmd
@@ -36,7 +36,9 @@ def main():
         print('Waiting for shared local GPU lock', flush=True)
         fcntl.flock(lock, fcntl.LOCK_EX)
         while True:
-            rows = subprocess.check_output(['nvidia-smi','--query-gpu=index,memory.free','--format=csv,noheader,nounits'],text=True).splitlines()
+            rows = subprocess.check_output(['nvidia-smi','--query-gpu=index,memory.free',
+                                           '--format=csv,noheader,nounits'],
+                                          text=True).splitlines()
             free = {int(row.split(',')[0]) for row in rows if int(row.split(',')[1]) >= 88000}
             if args.action == 'benchmark':
                 pairs = [p for p in [(0,1),(2,3),(4,5),(6,7)] if set(p) <= free]
@@ -47,7 +49,8 @@ def main():
                 break
             print('Waiting for free local GPUs', flush=True)
             time.sleep(60)
-        env = {**os.environ, 'PYTHONPATH':str(REPO/'src'), 'VLLM_WORKER_MULTIPROC_METHOD':'spawn', 'TOKENIZERS_PARALLELISM':'false'}
+        env = {**os.environ, 'PYTHONPATH':str(REPO/'src'), 'VLLM_WORKER_MULTIPROC_METHOD':'spawn',
+               'TOKENIZERS_PARALLELISM':'false'}
         print(f'{args.action}: model={MODEL}, GPUs={devices}', flush=True)
         if args.action == 'benchmark':
             subprocess.run([PY,*workflow_cmd('benchmark','s1_benchmark',f'hydra.run.dir={out}/hydra')],env={**env,'CUDA_VISIBLE_DEVICES':','.join(map(str,devices))},check=True,cwd=str(REPO))
@@ -57,7 +60,11 @@ def main():
                 for shard, gpu in enumerate(devices):
                     logfile = (ROOT/f'logs/rollout_worker_{shard}.log').open('a')
                     try:
-                        child = subprocess.Popen([PY,'-m','resonance.stages.qwen3_8b.sample_rollouts','--model',str(MODEL),'--shard',str(shard),'--nshards','4','--out',str(out/f'rollouts.shard{shard}-of-4.jsonl')],env={**env,'CUDA_VISIBLE_DEVICES':str(gpu)},stdout=logfile,stderr=subprocess.STDOUT)
+                        child = subprocess.Popen([PY,'-m','resonance.stages.qwen3_8b.sample_rollouts',
+                                                '--model',str(MODEL),
+                                                '--shard',str(shard),'--nshards','4',
+                                                '--out',str(out/f'rollouts.shard{shard}-of-4.jsonl')],
+                                                env={**env,'CUDA_VISIBLE_DEVICES':str(gpu)},stdout=logfile,stderr=subprocess.STDOUT)
                     finally:
                         logfile.close()
                     children.append(child)
@@ -68,10 +75,14 @@ def main():
                 assert all(p.returncode == 0 for p in children)
             finally:
                 for p in children:
-                    if p.poll() is None: p.terminate()
+                    if p.poll() is None:
+                        p.terminate()
                 for p in children:
-                    try: p.wait(timeout=30)
-                    except subprocess.TimeoutExpired: p.kill(); p.wait()
+                    try:
+                        p.wait(timeout=30)
+                    except subprocess.TimeoutExpired:
+                        p.kill()
+                        p.wait()
             expected = len(json.loads(TRAIN_JSON.read_text()))
             count = 0
             merged = out/'rollouts.jsonl'

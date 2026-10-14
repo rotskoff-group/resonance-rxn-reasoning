@@ -3,6 +3,8 @@ name = "resonance"
 version = "0.1.0"
 description = "Staged distillation of reaction-prediction reasoning into small language models"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.11,<3.12"
 dependencies = [
     "hydra-core>=1.3.2",
@@ -26,6 +28,10 @@ dependencies = [
     "ipykernel>=7.2.0",
     "modal>=1.4.2",
 ]
+
+[project.urls]
+Repository = "https://github.com/rotskoff-group/resonance-rxn-reasoning"
+Dataset = "https://huggingface.co/datasets/anaghaa/resonance"
 
 [project.optional-dependencies]
 mapping = [
@@ -52,14 +58,14 @@ resonance-sft = "resonance.workflows.sft:main"
 resonance-dpo = "resonance.workflows.dpo:main"
 
 [build-system]
-requires = ["setuptools>=64"]
+requires = ["setuptools>=77"]   # PEP 639 license expression
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-resonance = ["configs/**/*.yaml", "configs/**/*.json", "data/datasets/*.json", "pipelines/traces/*.json"]
+resonance = ["configs/**/*.yaml", "configs/**/*.json", "data/datasets/*.json", "pipelines/traces/*.json", "release/*.txt"]
 
 [tool.uv]
 environments = ["sys_platform == 'linux'"]
@@ -77,6 +83,32 @@ torchaudio = { index = "pytorch-cu126" }
 
 [dependency-groups]
 dev = [
+    "pytest>=8.0",
     "ruff>=0.15.6",
     "ty>=0.0.22",
 ]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+# Verbatim copies of the scripts that produced the reasoning-probe samples, pinned by hash
+# (resonance.analysis.metareasoning.verify checks them against frozen/MANIFEST.json).
+extend-exclude = ["src/resonance/analysis/metareasoning/frozen"]
+
+[tool.ruff.lint]
+# pycodestyle, pyflakes, import order, bugbear, pyupgrade
+select = ["E", "W", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# Prompt text: line breaks inside these strings are part of the prompts the models were
+# trained and evaluated on (prompts_stage1 is also pinned by fingerprint), so they are not rewrapped.
+"src/resonance/data/prompts/benchmark/forward_rxn.py" = ["E501"]
+"src/resonance/pipelines/traces/prompts_stage1.py" = ["E501"]
+"src/resonance/stages/qwen3_8b/sample_rollouts.py" = ["E501"]
+
+[tool.ty.src]
+exclude = ["src/resonance/analysis/metareasoning/frozen"]
+
+[tool.ty.environment]
+# runner.py, resample.py and summary.py import the frozen scripts by module name (sys.path).
+extra-paths = ["src/resonance/analysis/metareasoning/frozen"]

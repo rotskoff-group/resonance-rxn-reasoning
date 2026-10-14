@@ -12,7 +12,7 @@ Inference functions (return a chat message list):
   build_messages        — system + user messages for chat-completion APIs
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from loguru import logger
 from tqdm import tqdm
@@ -25,10 +25,10 @@ def prepare_data_samples(
     parser: Parser,
     prompt: Prompt,
     representation: str,
-    raw_data_list: List[Any],
-    system_prompt_kwargs: Optional[Dict[str, Any]] = None,
-    task_template_kwargs: Optional[Dict[str, Any]] = None,
-) -> List[Dict[str, Any]]:
+    raw_data_list: list[Any],
+    system_prompt_kwargs: dict[str, Any] | None = None,
+    task_template_kwargs: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
     """Build a list of sample dicts from raw data, mirroring GenericDataset.__getitem__.
 
     Args:
@@ -66,7 +66,7 @@ def prepare_data_samples(
     return samples
 
 
-def sft_formatting_func(example: Dict[str, Any]) -> str:
+def sft_formatting_func(example: dict[str, Any]) -> str:
     """Convert GenericDataset sample to text for SFT training.
 
     Args:
@@ -78,7 +78,7 @@ def sft_formatting_func(example: Dict[str, Any]) -> str:
     return f"{example['system_prompt']}\n\n{example['task_prompt']}"
 
 
-def cpt_formatting_func(example: Dict[str, Any]) -> str:
+def cpt_formatting_func(example: dict[str, Any]) -> str:
     """Convert GenericDataset sample to text for CPT.
 
     Args:
@@ -91,9 +91,9 @@ def cpt_formatting_func(example: Dict[str, Any]) -> str:
 
 
 def build_messages(
-    sample: Dict[str, Any], disable_thinking: bool = True
-) -> List[Dict[str, str]]:
-    messages: List[Dict[str, str]] = []
+    sample: dict[str, Any], disable_thinking: bool = True
+) -> list[dict[str, str]]:
+    messages: list[dict[str, str]] = []
     if sample["system_prompt"]:
         messages.append({"role": "system", "content": sample["system_prompt"]})
     messages.append({"role": "user", "content": sample["task_prompt"]})

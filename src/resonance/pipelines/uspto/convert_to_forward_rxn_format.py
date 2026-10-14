@@ -22,13 +22,13 @@ To JSON format expected by ForwardRxnParser:
     ]
 """
 
-import json
 import argparse
+import json
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Any
 
 
-def convert_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
+def convert_entry(entry: dict[str, Any]) -> dict[str, Any]:
     """
     Convert a single USPTO-50k entry to ForwardRxnParser format.
 
@@ -73,7 +73,7 @@ def convert_jsonl_to_json(input_path: Path, output_path: Path) -> None:
     converted_entries = []
 
     print(f"Reading from {input_path}")
-    with open(input_path, 'r') as f:
+    with open(input_path) as f:
         for line_num, line in enumerate(f, 1):
             line = line.strip()
             if not line:

@@ -8,15 +8,15 @@ import fcntl
 import json
 import multiprocessing
 import os
-from pathlib import Path
 import shutil
 import subprocess
 import time
 from collections import defaultdict
-
-from resonance.stages.common import checkpoint, iter_jsonl, sha256, write_json
+from pathlib import Path
+from typing import Any
 
 from resonance.paths import run_dir
+from resonance.stages.common import checkpoint, iter_jsonl, sha256, write_json
 from resonance.stages.qwen3_8_27b import evaluate_local, local_run
 from resonance.stages.qwen3_8_27b.config import ABLATION_VOLUME, PROMPTS, RUN_ID, SRC, STAGE_DIR
 
@@ -34,7 +34,7 @@ def status(value, **extra):
 
 def download():
     import modal
-    multiprocessing.cpu_count = lambda: 2
+    multiprocessing.cpu_count = lambda: 2  # ty: ignore[invalid-assignment]  (deliberate: caps modal's download threads)
     manifest = json.loads((ROOT/'outputs/skip_s2/s3_one_epoch_COMPLETE.json').read_text())
     assert manifest['arm'] == 'skip_s2' and manifest['stage'] == 's3'
     assert manifest['training']['global_step'] == 429
@@ -128,7 +128,8 @@ def main():
         summary = json.loads((OUT/'generation/COMPLETE.json').read_text())
         assert summary['rows'] == 5000
         labels = json.loads((run_dir('uspto_classes')/'outputs/uspto_labels_test.json').read_text())['labels']
-        classes = defaultdict(lambda: {'rows': 0, 'correct': 0, 'valid': 0, 'truncated': 0, 'tokens': 0})
+        classes: defaultdict[str, dict[str, Any]] = defaultdict(
+            lambda: {'rows': 0, 'correct': 0, 'valid': 0, 'truncated': 0, 'tokens': 0})
         seen = set()
         for row in iter_jsonl(OUT/'generation/rollouts.jsonl'):
             idx = row['row_idx']

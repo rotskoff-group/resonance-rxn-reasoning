@@ -12,11 +12,15 @@ Two branches need different treatment:
 Ported from run_dir('forward_enum')/scripts/template_slots.py.
 CLI: python -m resonance.pipelines.forward_enum.template_slots [--templates T] [--out OUT]
 """
-import argparse, json
+import argparse
+import json
+
+from rdkit import Chem, rdBase
+
 from resonance.paths import run_dir
 from resonance.pipelines.forward_enum.audit_ground_truth import TEMPLATES
 from resonance.pipelines.synthetic_data.apply_chunk_screen import _split_lhs
-from rdkit import Chem, rdBase
+
 rdBase.DisableLog("rdApp.*")
 
 if __name__ == '__main__':

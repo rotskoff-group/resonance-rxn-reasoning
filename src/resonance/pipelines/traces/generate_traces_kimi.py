@@ -22,7 +22,6 @@ Ported from run_dir('traces')/scripts/generate_traces_kimi.py.
 import argparse
 import asyncio
 import json
-import os
 import random
 import time
 from pathlib import Path
@@ -30,8 +29,8 @@ from pathlib import Path
 from openai import APIError, AsyncOpenAI, RateLimitError
 
 from resonance.paths import run_dir
-from resonance.pipelines.traces.prompts_stage1 import SYSTEM_PROMPT, USER_TEMPLATE, FINGERPRINT
 from resonance.pipelines.traces.endpoints import EndpointError, describe, resolve
+from resonance.pipelines.traces.prompts_stage1 import FINGERPRINT, SYSTEM_PROMPT, USER_TEMPLATE
 
 RUN       = run_dir("traces")
 DATA_FILE = run_dir("uspto") / "train.json"

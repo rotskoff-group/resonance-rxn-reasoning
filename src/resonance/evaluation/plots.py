@@ -21,17 +21,16 @@ Training monitoring plots (metrics: List[dict] from GRPO trainer logs,
 
 import json
 import re
-from typing import Dict, List, Optional
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker
 
 
 def plot_model_accuracy(
-    model_results: Dict[str, dict],
+    model_results: dict[str, dict],
     title: str = "Overall Accuracy by Model",
-    output_path: Optional[str] = None,
-    colors: Optional[List[str]] = None,
+    output_path: str | None = None,
+    colors: list[str] | None = None,
 ) -> None:
     """Bar chart of overall accuracy for each model.
 
@@ -53,7 +52,7 @@ def plot_model_accuracy(
     ax.set_xticklabels(models, rotation=15, ha="right")
     ax.spines[["top", "right"]].set_visible(False)
 
-    for bar, acc in zip(bars, accuracies):
+    for bar, acc in zip(bars, accuracies, strict=True):
         ax.text(
             bar.get_x() + bar.get_width() / 2,
             bar.get_height() + 1,
@@ -73,12 +72,12 @@ def plot_model_accuracy(
 
 
 def plot_accuracy_and_delta(
-    model_results: Dict[str, dict],
+    model_results: dict[str, dict],
     baseline_label: str,
     title_accuracy: str = "Overall Accuracy",
     title_delta: str = "Δ Accuracy vs Baseline",
-    output_path: Optional[str] = None,
-    colors: Optional[List[str]] = None,
+    output_path: str | None = None,
+    colors: list[str] | None = None,
     baseline_color: str = "#aaaaaa",
 ) -> None:
     """Side-by-side overall accuracy (left) and Δ vs baseline (right) in one figure.
@@ -139,7 +138,7 @@ def plot_accuracy_and_delta(
     ax_acc.set_xticks(range(n_models))
     ax_acc.set_xticklabels(all_labels, rotation=15, ha="right")
     ax_acc.spines[["top", "right"]].set_visible(False)
-    for bar, acc in zip(bars, accuracies):
+    for bar, acc in zip(bars, accuracies, strict=True):
         ax_acc.text(
             bar.get_x() + bar.get_width() / 2,
             bar.get_height() + 1,
@@ -193,9 +192,9 @@ def plot_accuracy_and_delta(
 
 
 def plot_accuracy_by_question_type(
-    model_results: Dict[str, dict],
+    model_results: dict[str, dict],
     title: str = "Accuracy by Question Type",
-    output_path: Optional[str] = None,
+    output_path: str | None = None,
 ) -> None:
     """Grouped bar chart of per-question-type accuracy for each model.
 
@@ -247,11 +246,11 @@ def plot_accuracy_by_question_type(
 
 
 def plot_delta_vs_baseline(
-    model_results: Dict[str, dict],
+    model_results: dict[str, dict],
     baseline_label: str,
     title: str = "Δ Accuracy vs Baseline",
-    output_path: Optional[str] = None,
-    colors: Optional[List[str]] = None,
+    output_path: str | None = None,
+    colors: list[str] | None = None,
 ) -> None:
     """Grouped bar chart of per-question-type accuracy delta vs a baseline model.
 
@@ -336,9 +335,9 @@ def plot_delta_vs_baseline(
 
 
 def plot_accuracy_heatmap(
-    model_results: Dict[str, dict],
+    model_results: dict[str, dict],
     title: str = "Accuracy heatmap",
-    output_path: Optional[str] = None,
+    output_path: str | None = None,
     cmap: str = "Blues",
     annot_fontsize: int = 9,
 ) -> None:
@@ -410,11 +409,11 @@ def plot_accuracy_heatmap(
 
 
 def plot_lollipop_delta(
-    model_results: Dict[str, dict],
+    model_results: dict[str, dict],
     baseline_label: str,
     title: str = "Δ Accuracy vs baseline",
-    output_path: Optional[str] = None,
-    colors: Optional[List[str]] = None,
+    output_path: str | None = None,
+    colors: list[str] | None = None,
     pos_color: str = "#1b6e3a",
     neg_color: str = "#c0392b",
 ) -> None:
@@ -455,7 +454,7 @@ def plot_lollipop_delta(
     # Build y positions: group by question type, one row per comparison model
     group_gap = 0.4
     bar_h = 0.6
-    y_ticks_mid: List[float] = []
+    y_ticks_mid: list[float] = []
     all_y, all_delta, all_color = [], [], []
 
     for qi, qt in enumerate(question_types):
@@ -479,7 +478,7 @@ def plot_lollipop_delta(
     fig_h = max(4, n_q * (n_c * bar_h + group_gap) * 0.45)
     fig, ax = plt.subplots(figsize=(8, fig_h))
 
-    for y, delta, color in zip(all_y, all_delta, all_color):
+    for y, delta, color in zip(all_y, all_delta, all_color, strict=True):
         ax.plot([0, delta], [y, y], color=color, linewidth=1.8, solid_capstyle="round")
         ax.scatter([delta], [y], color=color, s=55, zorder=3)
 
@@ -524,9 +523,9 @@ def plot_lollipop_delta(
 
 
 def plot_precision_recall_f1(
-    model_results: Dict[str, dict],
+    model_results: dict[str, dict],
     title: str = "Precision / Recall / F1 by Question Type",
-    output_path: Optional[str] = None,
+    output_path: str | None = None,
 ) -> None:
     """Grouped bar chart of Precision, Recall, and F1 per question type for each model.
 
@@ -597,9 +596,9 @@ def plot_precision_recall_f1(
 
 
 def plot_answer_rate(
-    model_results: Dict[str, dict],
+    model_results: dict[str, dict],
     title: str = "Answer Rate by Question Type",
-    output_path: Optional[str] = None,
+    output_path: str | None = None,
 ) -> None:
     """Grouped bar chart of the fraction of questions answered per question type.
 
@@ -668,7 +667,7 @@ def _roll(arr: list, w: int) -> list:
     return list(np.convolve(arr, np.ones(w) / w, mode="valid"))
 
 
-def _save_or_show(fig, output_path: Optional[str]) -> None:
+def _save_or_show(fig, output_path: str | None) -> None:
     plt.tight_layout()
     if output_path:
         plt.savefig(output_path, dpi=150, bbox_inches="tight")
@@ -679,11 +678,11 @@ def _save_or_show(fig, output_path: Optional[str]) -> None:
 
 
 def plot_training_metrics(
-    metrics: List[dict],
+    metrics: list[dict],
     title: str = "Training Metrics",
-    output_path: Optional[str] = None,
+    output_path: str | None = None,
     rolling_window: int = 10,
-    reward_max: Optional[float] = None,
+    reward_max: float | None = None,
 ) -> None:
     """2×2 dashboard of core GRPO training metrics over logged steps.
 
@@ -757,9 +756,9 @@ def plot_training_metrics(
 
 
 def plot_completion_stats(
-    metrics: List[dict],
+    metrics: list[dict],
     title: str = "Completion Lengths",
-    output_path: Optional[str] = None,
+    output_path: str | None = None,
     rolling_window: int = 10,
 ) -> None:
     """Mean/min/max completion token length and clipped ratio over training steps.
@@ -808,10 +807,10 @@ def plot_completion_stats(
 # ---------------------------------------------------------------------------
 
 
-def _load_critic_rows(critic_log_dir: str) -> List[dict]:
+def _load_critic_rows(critic_log_dir: str) -> list[dict]:
     """Load all JSONL rows from a critic log directory (recursive glob)."""
     import glob
-    rows: List[dict] = []
+    rows: list[dict] = []
     for path in sorted(glob.glob(f"{critic_log_dir}/**/*.jsonl", recursive=True)):
         with open(path) as f:
             for line in f:
@@ -830,7 +829,7 @@ _PRODUCT_RE = re.compile(r"<product>(.*?)</product>", re.DOTALL | re.IGNORECASE)
 def plot_product_tiers(
     critic_log_dir: str,
     title: str = "Product Tiered Reward",
-    output_path: Optional[str] = None,
+    output_path: str | None = None,
     rolling_window: int = 10,
 ) -> None:
     """Three-panel product reward diagnostic: tier rates, Tanimoto histogram, training trend.
@@ -957,9 +956,9 @@ def plot_product_tiers(
 
 def plot_principle_scores(
     critic_log_dir: str,
-    principles: Optional[List[str]] = None,
+    principles: list[str] | None = None,
     title: str = "Constitutional Reward by Principle",
-    output_path: Optional[str] = None,
+    output_path: str | None = None,
     rolling_window: int = 5,
 ) -> None:
     """Mean ± std bar chart and score trajectories per constitutional principle.
@@ -971,8 +970,9 @@ def plot_principle_scores(
         output_path: If given, save instead of showing.
         rolling_window: Moving-average window for the trajectory panel.
     """
-    import numpy as np
     from collections import defaultdict
+
+    import numpy as np
 
     rows = _load_critic_rows(critic_log_dir)
     if not rows:
@@ -1013,7 +1013,7 @@ def plot_principle_scores(
     for i, pid in enumerate(principles):
         if pid not in principle_steps:
             continue
-        pairs = sorted(zip(principle_steps[pid], principle_scores[pid]))
+        pairs = sorted(zip(principle_steps[pid], principle_scores[pid], strict=True))
         xs = [p[0] for p in pairs]
         ys = [p[1] for p in pairs]
         c = colors[i % len(colors)]
@@ -1033,9 +1033,9 @@ def plot_principle_scores(
 
 def plot_critic_product_correlation(
     critic_log_dir: str,
-    principles: Optional[List[str]] = None,
+    principles: list[str] | None = None,
     title: str = "Critic Score vs Product Prediction Accuracy",
-    output_path: Optional[str] = None,
+    output_path: str | None = None,
 ) -> None:
     """Three-panel correlation: constitutional critic score vs product accuracy tier.
 
@@ -1052,8 +1052,9 @@ def plot_critic_product_correlation(
         title: Figure suptitle.
         output_path: If given, save instead of showing.
     """
-    import numpy as np
     from collections import defaultdict
+
+    import numpy as np
 
     try:
         from rdkit import Chem, DataStructs
@@ -1130,7 +1131,7 @@ def plot_critic_product_correlation(
     ax.set_ylim(0, 1)
     ax.set_title("Mean critic score by product tier")
     ax.spines[["top", "right"]].set_visible(False)
-    for i, (mv, sv, nv) in enumerate(zip(tier_means, tier_stds, tier_ns)):
+    for i, (mv, sv, nv) in enumerate(zip(tier_means, tier_stds, tier_ns, strict=True)):
         ax.text(i, mv + sv + 0.02, f"n={nv}", ha="center", fontsize=7)
 
     ax = axes[1]
@@ -1138,7 +1139,7 @@ def plot_critic_product_correlation(
     if valid_joint:
         xs = [j["tanimoto"] for j in valid_joint]
         ys = [j["mean_const"] for j in valid_joint]
-        tier_c = dict(zip(tier_order, tier_colors))
+        tier_c = dict(zip(tier_order, tier_colors, strict=True))
         ax.scatter(xs, ys, c=[tier_c[str(j["tier"])] for j in valid_joint],
                    alpha=0.5, s=20, linewidths=0)
         try:
@@ -1188,9 +1189,9 @@ def plot_critic_product_correlation(
 
 def plot_judge_flags(
     critic_log_dir: str,
-    flag_patterns: Optional[Dict[str, str]] = None,
+    flag_patterns: dict[str, str] | None = None,
     title: str = "Judge Information-Leak Flags",
-    output_path: Optional[str] = None,
+    output_path: str | None = None,
 ) -> None:
     """Horizontal bar chart of how often the judge cites privileged information.
 
@@ -1243,7 +1244,7 @@ def plot_judge_flags(
     ax.set_xlim(0, 110)
     ax.set_title(f"{title}\n(n={total} critic rows)")
     ax.spines[["top", "right"]].set_visible(False)
-    for bar, pct in zip(bars, pcts):
+    for bar, pct in zip(bars, pcts, strict=True):
         ax.text(pct + 1, bar.get_y() + bar.get_height() / 2,
                 f"{pct:.1f}%", va="center", fontsize=9)
 

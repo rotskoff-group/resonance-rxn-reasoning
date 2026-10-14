@@ -1,8 +1,12 @@
 """Names and locations shared by the 27B scripts and Modal apps.
 
-Modal app and volume names default to the ones the published runs used; override any of
-them with the RESONANCE_MODAL_* variable named next to it. `CONTAINER_ENV` is baked into
-every image so the names resolve identically inside containers.
+Modal app and volume names live in your own Modal workspace: the S1 app (`full_sft`) and the
+S3 app create their volumes if missing, the other apps expect them to exist. Override any
+name with the RESONANCE_MODAL_* variable named next to it. (The published runs used
+volumes named chem-qwen38-27b-kimi-no-id-s1, chem-qwen38-27b-no-id-s2-s3 and
+chem-qwen38-27b-stage-ablations in the authors' workspace; their checkpoints are released on
+the Hugging Face Hub, see resonance.release.artifacts.) `CONTAINER_ENV` is baked into every
+image so the names resolve identically inside containers.
 
 Local directories come from `resonance.paths.run_dir`:
     pipeline_27b  base / S1-eval / S2 / S3 outputs (`outputs/<RUN_ID>/...`), GPU lock files
@@ -27,7 +31,7 @@ RUN_ID = 'no-id-b97ef67b9ba65863'
 SOURCE_SHA = 'b97ef67b9ba658631c2c95a015d2166e32180c7d81ce583a9f1aeac9d45f27e9'
 
 _NAMES = {
-    # env var                              default (published runs)
+    # env var                              default
     'RESONANCE_MODAL_S1_VOLUME':            'resonance-27b-kimi-no-id-s1',
     'RESONANCE_MODAL_PIPELINE_VOLUME':      'resonance-27b-no-id-s2-s3',
     'RESONANCE_MODAL_ABLATION_VOLUME':      'resonance-27b-stage-ablations',

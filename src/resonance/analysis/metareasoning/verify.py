@@ -17,7 +17,7 @@ def sha256(path):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap = argparse.ArgumentParser(description=str(__doc__).splitlines()[0])
     ap.add_argument("--protocol", type=Path, help="run protocol JSON mapping script path -> sha256")
     args = ap.parse_args(argv)
     manifest = json.loads((FROZEN / "MANIFEST.json").read_text())["files"]

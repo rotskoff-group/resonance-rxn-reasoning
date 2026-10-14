@@ -149,7 +149,7 @@ def main():
             if written % 1000 == 0:
                 print(f"  Pairs written: {written}  (processed {total})")
 
-    print(f"\n=== Mining complete ===")
+    print("\n=== Mining complete ===")
     print(f"  Total records:             {total}")
     print(f"  Skipped (no correct):      {skipped_no_correct}  "
           f"({100*skipped_no_correct/max(total,1):.1f}%)")
@@ -157,8 +157,8 @@ def main():
           f"({100*skipped_all_correct/max(total,1):.1f}%)")
     print(f"  DPO pairs written:         {written}  "
           f"({100*written/max(total,1):.1f}%)")
-    print(f"  Self-play chosen:          random correct model completion")
-    print(f"  Hard negative:             highest-Tanimoto wrong completion")
+    print("  Self-play chosen:          random correct model completion")
+    print("  Hard negative:             highest-Tanimoto wrong completion")
     print(f"  Output: {out_path}")
 
 

@@ -10,7 +10,9 @@ Ported from run_dir('forward_enum')/scripts/screen_templates.py.
 CLI: python -m resonance.pipelines.forward_enum.screen_templates --input --templates
      --template-ids-json --chunk-id --chunk-size --output-dir
 """
-import argparse, json
+import argparse
+import json
+
 from resonance.pipelines.synthetic_data import apply_chunk_screen as m
 
 if __name__ == '__main__':

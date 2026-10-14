@@ -11,8 +11,9 @@ Two backends are provided:
 import asyncio
 import random
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from contextlib import nullcontext
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any
 
 import torch
 from loguru import logger
@@ -27,9 +28,9 @@ class InferenceBackend(ABC):
     @abstractmethod
     def generate(
         self,
-        messages_list: List[List[Dict[str, str]]],
-        save_callback: Optional[Callable[[int, str], None]] = None,
-    ) -> List[str]:
+        messages_list: list[list[dict[str, str]]],
+        save_callback: Callable[[int, str], None] | None = None,
+    ) -> list[str]:
         """Run inference over a batch of chat message lists.
 
         Args:
@@ -60,16 +61,16 @@ class VLLMBackend(InferenceBackend):
     def __init__(
         self,
         model_name: str,
-        vllm_kwargs: Optional[Dict[str, Any]] = None,
-        sampling_params_kwargs: Optional[Dict[str, Any]] = None,
-        lora_path: Optional[str] = None,
+        vllm_kwargs: dict[str, Any] | None = None,
+        sampling_params_kwargs: dict[str, Any] | None = None,
+        lora_path: str | None = None,
     ):
         self.model_name = model_name
         self.vllm_kwargs = vllm_kwargs or {}
         self.sampling_params_kwargs = sampling_params_kwargs or {}
         self.lora_path = lora_path
-        self._llm: Optional[Any] = None
-        self._lora_request: Optional[Any] = None
+        self._llm: Any | None = None
+        self._lora_request: Any | None = None
 
     def _load(self) -> None:
         if self._llm is None:
@@ -84,14 +85,14 @@ class VLLMBackend(InferenceBackend):
 
     def generate(
         self,
-        messages_list: List[List[Dict[str, str]]],
-        save_callback: Optional[Callable[[int, str], None]] = None,
-    ) -> List[str]:
+        messages_list: list[list[dict[str, str]]],
+        save_callback: Callable[[int, str], None] | None = None,
+    ) -> list[str]:
         self._load()
         assert self._llm is not None
         sampling_params = SamplingParams(**self.sampling_params_kwargs)
         logger.info(f"Running vllm inference on {len(messages_list)} samples...")
-        chat_kwargs: Dict[str, Any] = {"sampling_params": sampling_params}
+        chat_kwargs: dict[str, Any] = {"sampling_params": sampling_params}
         if self._lora_request is not None:
             chat_kwargs["lora_request"] = self._lora_request
         outputs = self._llm.chat(messages_list, **chat_kwargs)
@@ -121,8 +122,8 @@ class APIBackend(InferenceBackend):
         self,
         model_name: str,
         api_key: str,
-        api_base: Optional[str] = None,
-        request_kwargs: Optional[Dict[str, Any]] = None,
+        api_base: str | None = None,
+        request_kwargs: dict[str, Any] | None = None,
         concurrency: int = 32,
         include_reasoning: bool = True,
     ):
@@ -137,7 +138,7 @@ class APIBackend(InferenceBackend):
         self,
         client: Any,
         semaphore: asyncio.Semaphore,
-        messages: List[Dict[str, str]],
+        messages: list[dict[str, str]],
     ) -> str:
         max_retries = 8
         base_delay = 1.0
@@ -186,7 +187,7 @@ class APIBackend(InferenceBackend):
         self,
         client: Any,
         semaphore: asyncio.Semaphore,
-        messages: List[Dict[str, str]],
+        messages: list[dict[str, str]],
         idx: int,
     ) -> tuple[int, str]:
         result = await self._call_one(client, semaphore, messages)
@@ -194,20 +195,21 @@ class APIBackend(InferenceBackend):
 
     async def _generate_all(
         self,
-        messages_list: List[List[Dict[str, str]]],
-        save_callback: Optional[Callable[[int, str], None]] = None,
-    ) -> List[str]:
-        client_kwargs: Dict[str, Any] = {"api_key": self.api_key}
+        messages_list: list[list[dict[str, str]]],
+        save_callback: Callable[[int, str], None] | None = None,
+    ) -> list[str]:
+        client_kwargs: dict[str, Any] = {"api_key": self.api_key}
         if self.api_base:
             client_kwargs["base_url"] = self.api_base
         client = AsyncOpenAI(**client_kwargs)
 
         semaphore = asyncio.Semaphore(self.concurrency)
         logger.info(
-            f"Running async API inference on {len(messages_list)} samples (model: {self.model_name}, concurrency: {self.concurrency})..."
+            f"Running async API inference on {len(messages_list)} samples "
+            f"(model: {self.model_name}, concurrency: {self.concurrency})..."
         )
 
-        results: List[Optional[str]] = [None] * len(messages_list)
+        results: list[str | None] = [None] * len(messages_list)
         tasks = [
             self._call_one_indexed(client, semaphore, m, i)
             for i, m in enumerate(messages_list)
@@ -222,9 +224,9 @@ class APIBackend(InferenceBackend):
 
     def generate(
         self,
-        messages_list: List[List[Dict[str, str]]],
-        save_callback: Optional[Callable[[int, str], None]] = None,
-    ) -> List[str]:
+        messages_list: list[list[dict[str, str]]],
+        save_callback: Callable[[int, str], None] | None = None,
+    ) -> list[str]:
         return asyncio.run(self._generate_all(messages_list, save_callback))
 
 
@@ -258,12 +260,12 @@ class SharedModelBackend(InferenceBackend):
 
     def __init__(
         self,
-        sampling_kwargs: Optional[Dict[str, Any]] = None,
+        sampling_kwargs: dict[str, Any] | None = None,
         use_lora: bool = False,
     ):
         self._model = None
         self._tokenizer = None
-        self._sampling_kwargs: Dict[str, Any] = sampling_kwargs or {
+        self._sampling_kwargs: dict[str, Any] = sampling_kwargs or {
             "max_new_tokens": 512
         }
         self._use_lora = use_lora
@@ -279,9 +281,9 @@ class SharedModelBackend(InferenceBackend):
 
     def generate(
         self,
-        messages_list: List[List[Dict[str, str]]],
-        save_callback: Optional[Callable[[int, str], None]] = None,
-    ) -> List[str]:
+        messages_list: list[list[dict[str, str]]],
+        save_callback: Callable[[int, str], None] | None = None,
+    ) -> list[str]:
         if not self.is_bound:
             raise RuntimeError(
                 "SharedModelBackend has no model bound. "

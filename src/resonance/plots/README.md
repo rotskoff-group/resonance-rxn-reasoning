@@ -1,7 +1,8 @@
 # `resonance.plots`: paper figures
 
 Every paper figure is a pure function of one JSON file. This package holds only
-the plotting code; the inputs are produced by `resonance.paper.export`.
+the plotting code; the paper's inputs are produced by `resonance.paper.run_all`
+(see [docs/FIGURES.md](../../../docs/FIGURES.md)).
 
 ```bash
 python -m resonance.plots.run --list

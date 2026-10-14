@@ -11,7 +11,6 @@ Run with Hydra (mirrors benchmark.py):
 
 import json
 from pathlib import Path
-from typing import Optional
 
 import hydra
 from omegaconf import DictConfig, OmegaConf
@@ -27,7 +26,7 @@ except ImportError:
     _sklearn_available = False
 
 
-def extract_boxed(text: str) -> Optional[str]:
+def extract_boxed(text: str) -> str | None:
     """Extract the content of the last \\boxed{} in text, handling nested braces."""
     results = []
     i = 0
@@ -54,7 +53,7 @@ def extract_boxed(text: str) -> Optional[str]:
 
 
 def answers_match(
-    predicted: str, ground_truth: str, answer_type: Optional[str]
+    predicted: str, ground_truth: str, answer_type: str | None
 ) -> bool:
     """Return True if predicted matches ground_truth.
 
@@ -73,7 +72,7 @@ def answers_match(
     return predicted.lower() == str(ground_truth).strip().lower()
 
 
-def evaluate(results_path: str, question_type: Optional[str] = None) -> dict:
+def evaluate(results_path: str, question_type: str | None = None) -> dict:
     """Evaluate a benchmark results JSONL file.
 
     Args:
@@ -158,11 +157,11 @@ def evaluate(results_path: str, question_type: Optional[str] = None) -> dict:
             ):
                 filtered = [
                     (t, p)
-                    for t, p in zip(trues, preds)
+                    for t, p in zip(trues, preds, strict=True)
                     if t != _NO_ANSWER and p != _NO_ANSWER
                 ]
                 if filtered:
-                    f_trues, f_preds = zip(*filtered)
+                    f_trues, f_preds = zip(*filtered, strict=True)
                 else:
                     f_trues, f_preds = [], []
                 avg = "binary"
@@ -238,7 +237,7 @@ def print_results(results: dict, results_path: str) -> None:
 
 
 def _run(
-    results_path: str, question_type: Optional[str], plot_cfg: Optional[dict]
+    results_path: str, question_type: str | None, plot_cfg: dict | None
 ) -> None:
     if not Path(results_path).exists():
         raise FileNotFoundError(f"Results file not found: {results_path}")
@@ -253,7 +252,7 @@ def _run(
     if output_dir:
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
-    def _out(name: str) -> Optional[str]:
+    def _out(name: str) -> str | None:
         return str(Path(output_dir) / name) if output_dir else None
 
     primary_label = Path(results_path).stem
@@ -323,7 +322,7 @@ def _hydra_main() -> None:
         raw = (
             OmegaConf.to_container(cfg.plot, resolve=True) if cfg.get("plot") else None
         )
-        plot_cfg: Optional[dict] = raw if isinstance(raw, dict) else None
+        plot_cfg: dict | None = raw if isinstance(raw, dict) else None
         _run(cfg.results_path, cfg.get("question_type"), plot_cfg)
 
     _inner()

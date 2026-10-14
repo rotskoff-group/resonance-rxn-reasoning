@@ -5,15 +5,22 @@ Launch: python -m modal run --detach src/resonance/stages/qwen3_8_27b/modal_apps
 """
 import json
 import pathlib
+
 import modal
 
 from resonance.paths import run_dir
 from resonance.stages.qwen3_8_27b.config import (
-    ABLATION_VOLUME, APP_ABLATION, APP_EVAL, APP_PIPELINE, APP_RESUME, APP_S1, APP_S2, APP_S3,
-    CONTAINER_ENV, PIPELINE_VOLUME, PROMPTS, RUN_ID, S1_VOLUME, pipeline_root, traces_path, with_code)
+    APP_S1,
+    CONTAINER_ENV,
+    S1_VOLUME,
+    traces_path,
+    with_code,
+)
+from resonance.stages.qwen3_8_27b.config import BASE_MODEL as MODEL
+from resonance.stages.qwen3_8_27b.config import BASE_REVISION as REVISION
 
 ROOT = run_dir('s1_27b')
-from resonance.stages.qwen3_8_27b.config import BASE_MODEL as MODEL, BASE_REVISION as REVISION
+
 SOURCE = traces_path()
 app = modal.App(APP_S1)
 volume = modal.Volume.from_name(S1_VOLUME, create_if_missing=True)
@@ -38,11 +45,12 @@ image = with_code(image, "/pilot_code")
               timeout=3600, retries=0)
 def prepare(raw: bytes, cached: bool = False):
     import hashlib
-    import random
     import importlib.metadata
-    from huggingface_hub import snapshot_download
-    from transformers import AutoTokenizer, AutoConfig
+    import random
+
     from datasets import Dataset
+    from huggingface_hub import snapshot_download
+    from transformers import AutoConfig, AutoTokenizer
 
     base = pathlib.Path("/pilot")
     if cached:
@@ -79,9 +87,11 @@ def prepare(raw: bytes, cached: bool = False):
     stats = {"model": MODEL, "revision": REVISION, "source_sha256": hashlib.sha256(raw).hexdigest(),
              "examples": len(ids), "tokens_per_epoch": sum(lengths), "mean_tokens": sum(lengths)/len(ids),
              "p50": lengths[len(ids)//2], "p99": lengths[int(len(ids)*.99)], "max_tokens": lengths[-1],
-             "thinking": True, "think_source": "trace", "loss": "all non-padding tokens (matches prior text-column SFT)",
+             "thinking": True, "think_source": "trace",
+             "loss": "all non-padding tokens (matches prior text-column SFT)",
              "packages": {p: importlib.metadata.version(p) for p in
-                          ["torch", "transformers", "accelerate", "deepspeed", "flash-linear-attention", "causal-conv1d"]}}
+                          ["torch", "transformers", "accelerate", "deepspeed", "flash-linear-attention",
+                           "causal-conv1d"]}}
     assert lengths[-1] <= 4096, "Unexpected long traces: inspect before allocating GPUs"
     Dataset.from_dict({"input_ids": ids}).save_to_disk(str(base / "dataset"))
     # First optimizer step exercises the 32 longest real examples; subsequent data is shuffled.

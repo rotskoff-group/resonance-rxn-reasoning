@@ -62,7 +62,7 @@ def plot(data):
     fig, axes = plt.subplots(1, len(stages), figsize=data.get("figsize", (style.TEXTWIDTH, 0.46 * style.TEXTWIDTH)),
                              sharex=True, sharey=True, layout="constrained")
     axes = [axes] if len(stages) == 1 else list(axes)
-    for stage, ax in zip(stages, axes):
+    for stage, ax in zip(stages, axes, strict=True):
         ax.axvline(0, color=style.ZERO_LINE, lw=1, ls=(0, (4, 3)), zorder=0)
         ax.grid(axis="y", color=style.GRID, lw=0.6)
         stage_points = {p["condition"]: p for p in points if p["stage"] == stage}

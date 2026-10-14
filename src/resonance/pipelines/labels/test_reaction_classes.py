@@ -12,12 +12,12 @@ import argparse
 import json
 import os
 
-from rdkit import RDLogger
+from rdkit import rdBase
 
 from resonance.paths import run_dir
 from resonance.pipelines.labels import classify_reactions
 
-RDLogger.DisableLog("rdApp.*")
+rdBase.DisableLog("rdApp.*")
 
 TEST_JSON = str(run_dir("uspto") / "test.json")
 CLASS_CACHE = str(run_dir("eval_rigor") / "outputs" / "audit" / "test_reaction_classes.json")
@@ -38,10 +38,6 @@ CLASS_NAMES = {
     "9": "functional group interconversion",
     "10": "functional group addition",
 }
-
-
-def class_label(code):
-    return CLASS_NAMES.get(str(code), str(code))
 
 
 def class_label(code):

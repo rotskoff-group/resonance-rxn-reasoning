@@ -1,6 +1,6 @@
 import json
+
 from ..base import Parser
-from typing import Optional
 
 
 class ForwardRxnParser(Parser):
@@ -8,7 +8,7 @@ class ForwardRxnParser(Parser):
         super().__init__(data_path)
 
     def load_from_json(
-        self, task: dict, representation: str, step_data: Optional[dict] = None
+        self, task: dict, representation: str, step_data: dict | None = None
     ):
         """Extract representation of reaction components
 
@@ -91,7 +91,7 @@ class ForwardRxnParser(Parser):
         data_path = self.data_path
 
         print(f"Loading reactions from {data_path}")
-        with open(data_path, "r") as f:
+        with open(data_path) as f:
             data = json.load(f)
 
             for rxn in data:

@@ -9,7 +9,6 @@ import argparse
 import hashlib
 import json
 import random
-import shutil
 from collections import Counter, defaultdict
 from pathlib import Path
 

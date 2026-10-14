@@ -14,8 +14,9 @@ from collections import Counter
 from pathlib import Path
 
 from datasets import Dataset, load_from_disk
+from rdkit import rdBase
 from transformers import AutoTokenizer
-from rdkit import RDLogger
+
 from resonance.evaluation.extractors import extract_forward_rxn, match_forward_rxn
 from resonance.paths import run_dir
 from resonance.stages.qwen3_8b import sample_rollouts
@@ -31,7 +32,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--out-dir', default=str(ROOT/'outputs'))
     args = ap.parse_args()
-    RDLogger.DisableLog('rdApp.*')
+    rdBase.DisableLog('rdApp.*')
     complete = json.loads((SAMPLE/'outputs/rollouts/COMPLETE.json').read_text())
     assert complete['model'] == str(MODEL)
     assert complete['rows'] == 40000 and complete['samples_per_row'] == 8
@@ -67,7 +68,7 @@ def main():
                     reagent_list=row['reagent_list'] or 'None specified')},
             ]
             prompt = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-            for sample, (response, finish) in enumerate(zip(row['responses'], row['finish_reasons'])):
+            for sample, (response, finish) in enumerate(zip(row['responses'], row['finish_reasons'], strict=True)):
                 stats['responses'] += 1
                 if finish != 'stop':
                     stats['rejected_unfinished'] += 1
@@ -101,6 +102,7 @@ def main():
                             'num_tokens': lengths})
     ds.save_to_disk(out/'sft_dataset')
     loaded = load_from_disk(out/'sft_dataset')
+    assert isinstance(loaded, Dataset)
     assert len(loaded) == stats['accepted'] and max(loaded['num_tokens']) <= MAX_LENGTH
     report = {**dict(stats), 'reactions_covered': len(covered),
               'source': str(source), 'source_sha256': digest.hexdigest(), 'model': str(MODEL),

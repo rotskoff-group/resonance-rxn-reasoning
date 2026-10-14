@@ -7,7 +7,6 @@ import random
 import sys
 import warnings
 from pathlib import Path
-from typing import Optional
 
 import pandas as pd
 import pyarrow as pa
@@ -27,7 +26,7 @@ import sascorer  # noqa: E402  # type: ignore
 _DUMMY_QUERY = Chem.MolFromSmarts("[#0]")
 
 
-def _resolve_wildcards(mol: Chem.Mol) -> Optional[Chem.Mol]:
+def _resolve_wildcards(mol: Chem.Mol) -> Chem.Mol | None:
     """Replace dummy (*) atoms with randomly selected inert R groups.
 
     Iterates until no dummy atoms remain (capped at 20 to guard against
@@ -62,7 +61,7 @@ def _resolve_wildcards(mol: Chem.Mol) -> Optional[Chem.Mol]:
         return None
 
 
-def compute_sa_scores(smiles_list: list[str]) -> Optional[list[float]]:
+def compute_sa_scores(smiles_list: list[str]) -> list[float] | None:
     """Return SA scores (1=easy, 10=hard) for a list of SMILES, or None on failure."""
     scores = []
     for smi in smiles_list:
@@ -144,7 +143,7 @@ def _run_rxn(rxn: AllChem.ChemicalReaction, mol: Chem.Mol) -> list[list[str]]:
 
 def _read_chunk(
     parquet_path: str, chunk_id: int, chunk_size: int
-) -> list[tuple[str, Optional[int], Optional[str]]]:
+) -> list[tuple[str, int | None, str | None]]:
     """Read a chunk of molecules from parquet using row-group-level reads.
 
     Reads only the row groups that overlap with [start, end), avoiding loading
@@ -185,7 +184,7 @@ def _read_chunk(
 
     df = (pa.concat_tables(batches) if len(batches) > 1 else batches[0]).to_pandas()
 
-    results: list[tuple[str, Optional[int], Optional[str]]] = []
+    results: list[tuple[str, int | None, str | None]] = []
     for _, row in df.iterrows():
         if has_parent_col:
             smi_raw = str(row["smiles"])

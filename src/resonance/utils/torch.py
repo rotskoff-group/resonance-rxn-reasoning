@@ -1,11 +1,11 @@
-from typing import Any, Dict, no_type_check
+from typing import Any, no_type_check
 
 import torch
 from omegaconf import DictConfig, OmegaConf
 
 
 @no_type_check
-def convert_dtype_in_kwargs(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+def convert_dtype_in_kwargs(kwargs: dict[str, Any]) -> dict[str, Any]:
     """Convert dtype string to torch dtype in kwargs dictionary.
 
     Args:

@@ -1,7 +1,7 @@
 """Utility functions for instantiating objects from configuration."""
 
 import os
-from typing import Any, Dict, Optional, cast
+from typing import Any, cast
 
 from loguru import logger
 from omegaconf import DictConfig, OmegaConf
@@ -21,7 +21,7 @@ from resonance.inference.backends import (
 
 def instantiate_collator(
     collator_type: str, tokenizer: PreTrainedTokenizerBase, **kwargs: Any
-) -> Optional[Any]:
+) -> Any | None:
     """Instantiate a data collator based on type string.
 
     Args:
@@ -70,10 +70,10 @@ def instantiate_backend(cfg: DictConfig) -> InferenceBackend:
         ValueError: If the mode is unrecognized or a required API key is missing.
     """
 
-    def _as_dict(key: str) -> Optional[Dict[str, Any]]:
+    def _as_dict(key: str) -> dict[str, Any] | None:
         val = cfg.get(key)
         return (
-            cast(Dict[str, Any], OmegaConf.to_container(val, resolve=True))
+            cast(dict[str, Any], OmegaConf.to_container(val, resolve=True))
             if val
             else None
         )

@@ -5,16 +5,25 @@ S2-V5 launched; its recorded training_config matches this code path).
 Run under torchrun with STAGE_ROOT, STAGE_MODEL, STAGE [, STAGE_DATA_ROOT, TRAIN_MODE,
 S2_NUM_TRAIN_EPOCHS, S3_NUM_TRAIN_EPOCHS, GRADIENT_ACCUMULATION_STEPS, PIPELINE_VOLUME].
 """
-import json
 import math
 import os
 import time
 from pathlib import Path
+from typing import Any, cast
+
 import torch
 import torch.distributed as dist
 from datasets import load_from_disk
-from transformers import AutoTokenizer, Qwen3_5ForConditionalGeneration, Trainer, TrainerCallback, TrainingArguments, set_seed
+from transformers import (
+    AutoTokenizer,
+    Qwen3_5ForConditionalGeneration,  # ty: ignore[unresolved-import]  (transformers 5.x, in the Modal image)
+    Trainer,
+    TrainerCallback,
+    TrainingArguments,
+    set_seed,
+)
 from transformers.trainer_utils import get_last_checkpoint
+
 from resonance.stages.common import checkpoint, write_json
 
 
@@ -40,7 +49,7 @@ def main():
     tok.pad_token = tok.pad_token or tok.eos_token
     grad_accum = int(os.environ.get('GRADIENT_ACCUMULATION_STEPS', '4'))
     assert world * grad_accum == 32
-    common = dict(output_dir=str(root/'checkpoints'), per_device_train_batch_size=1,
+    common: dict[str, Any] = dict(output_dir=str(root/'checkpoints'), per_device_train_batch_size=1,
         gradient_accumulation_steps=grad_accum, bf16=True, gradient_checkpointing=True,
         gradient_checkpointing_kwargs={'use_reentrant': False}, logging_steps=10,
         save_strategy='steps', save_steps=500, save_total_limit=2,
@@ -64,7 +73,7 @@ def main():
         if s3_epochs is not None:
             s3_epochs = float(s3_epochs)
             assert math.isfinite(s3_epochs) and s3_epochs > 0
-            budget = dict(max_steps=-1, num_train_epochs=s3_epochs)
+            budget: dict[str, Any] = dict(max_steps=-1, num_train_epochs=s3_epochs)
         else:
             budget = dict(max_steps=3000)
         # DDP fits the frozen BF16 base on each H200 and avoids ZeRO-3/ref-precompute incompatibility.
@@ -83,7 +92,8 @@ def main():
 
     class Commit(TrainerCallback):
         def on_step_end(self, args, state, control, **kwargs):
-            stop = torch.tensor(int(time.monotonic()-started > int(os.environ.get('TRAIN_SOFT_SECONDS','72000'))), device='cuda')
+            soft_seconds = int(os.environ.get('TRAIN_SOFT_SECONDS', '72000'))
+            stop = torch.tensor(int(time.monotonic()-started > soft_seconds), device='cuda')
             dist.all_reduce(stop, op=dist.ReduceOp.MAX)
             if stop.item():
                 control.should_training_stop = True
@@ -122,12 +132,14 @@ def main():
                           callbacks=[Commit()])
     else:
         from peft import LoraConfig
+
         from resonance.stages.qwen3_8_27b.dpo_tokens import TokenDPOTrainer
         # All text Linear modules except the output head; the unused vision tower is excluded.
         targets = [name for name, module in model.named_modules()
                    if isinstance(module, torch.nn.Linear) and 'visual' not in name and not name.endswith('lm_head')]
         assert targets
-        trainer = TokenDPOTrainer(model=model, ref_model=None, args=args, train_dataset=ds,
+        # stage == 's3' here, so `args` is the DPOConfig built above and `ds` the saved Dataset.
+        trainer = TokenDPOTrainer(model=model, ref_model=None, args=cast(Any, args), train_dataset=cast(Any, ds),
             processing_class=tok, callbacks=[Commit()], peft_config=LoraConfig(
                 r=128, lora_alpha=32, target_modules=targets, lora_dropout=.05,
                 bias='none', task_type='CAUSAL_LM'))

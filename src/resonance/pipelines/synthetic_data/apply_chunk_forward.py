@@ -22,7 +22,6 @@ import os
 import random
 import warnings
 from pathlib import Path
-from typing import Optional
 
 from loguru import logger
 from rdkit import Chem, rdBase
@@ -83,7 +82,7 @@ def process_forward_chunk(
     output_dir: str,
     subsample_size: int,
     depth: int = 0,
-    template_ids: Optional[set[int]] = None,
+    template_ids: set[int] | None = None,
 ) -> None:
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, f"hits_{chunk_id:04d}.jsonl")
@@ -127,7 +126,7 @@ def process_forward_chunk(
 
     logger.info(f"Chunk {chunk_id}: {len(mols)} valid molecules")
 
-    mol_objects: list[tuple[str, Optional[int], Chem.Mol]] = []
+    mol_objects: list[tuple[str, int | None, Chem.Mol]] = []
     for smi, cid, _parent in mols:
         mol = Chem.MolFromSmiles(smi)
         if mol is not None:
@@ -142,7 +141,7 @@ def process_forward_chunk(
     n_hits = 0
     with open(output_path, "w") as out_f:
         # 1-reactant templates: every molecule in chunk
-        for mol_smi, cid, mol in mol_objects:
+        for mol_smi, _cid, mol in mol_objects:
             for t, rxn in one_rxn:
                 for product_smi in _run_forward(rxn, (mol,)):
                     record = {

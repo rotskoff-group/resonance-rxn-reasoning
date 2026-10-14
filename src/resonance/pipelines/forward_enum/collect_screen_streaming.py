@@ -56,7 +56,7 @@ def main() -> None:
         if tbl.num_rows == 0:
             continue
         d = tbl.to_pydict()
-        for smi, cid, tid, slot in zip(d["smiles"], d["cid"], d["template_id"], d["slot_idx"]):
+        for smi, cid, tid, slot in zip(d["smiles"], d["cid"], d["template_id"], d["slot_idx"], strict=True):
             key = (int(tid), int(slot))
             counts[key] += 1
             res = keep.setdefault(key, [])

@@ -12,7 +12,9 @@ Definitions (fixed; see README.md):
   * Delta is paired by reaction: mean over reactions of (condition accuracy -
     baseline accuracy), each averaged over that reaction's draws. SE is the
     question-level SD / sqrt(n); p is two-sided normal on Delta/SE, plus exact
-    McNemar when both sides are single draws.
+    McNemar when both sides are single draws. `se_draws_pp` is the draw-level
+    alternative: SD of the per-draw accuracies / sqrt(draws), combined for the
+    condition and baseline in quadrature (a figure's `error_bars: "draws"`).
   * Reasoning tokens: tokenizer offsets inside <think>...</think>; a prefilled
     think starts at 0; unclosed reasoning ends at the first answer marker or the
     end of the response; a response with neither <think> nor a prefill counts 0.
@@ -31,8 +33,8 @@ from pathlib import Path
 FROZEN = Path(__file__).resolve().parent / "frozen"
 sys.path.insert(0, str(FROZEN))
 
-from score_selfcorrect import EXTRACT, canon, classify  # noqa: E402
 from e1_allocation import majority  # noqa: E402
+from score_selfcorrect import EXTRACT, canon, classify  # noqa: E402
 
 ANSWER_MARKER = re.compile(r"<answer>|<product>|<forward_reaction>|\\boxed\{")
 
@@ -118,7 +120,7 @@ def condition_file(stage, cond):
 
 
 def baseline_file(stage, cond):
-    return Path(stage["fresh"]) if cond == "C5_fresh" else Path(stage["conditions_dir"]) / f"{cond}.jsonl"
+    return Path(stage["fresh"]) if cond == "C5_fresh" else condition_file(stage, cond)
 
 
 _SCORED = {}
@@ -144,10 +146,18 @@ def summarize_condition(stage, cond, baseline, labels, tokenizer, min_class_n):
     toks = {i: [reasoning_tokens(t, recs[i].get("think_prefilled", False), tokenizer)
                 for t in texts(recs[i])] for i in ids}
     token_means = [mean(toks[i]) for i in ids]
+    # Draw-level SE: SD of the per-draw means over draws / sqrt(draws) (error_bars: "draws").
+    def draw_means(per_row):
+        n_draws = min(len(per_row[i]) for i in ids)
+        return [mean([per_row[i][j] for i in ids]) for j in range(n_draws)]
+    se_cond, se_base = se(draw_means(ok)), se(draw_means(base_ok))
+    draws_se = {"se_draws_pp": 100 * math.sqrt(se_cond ** 2 + se_base ** 2),
+                "se_draws_reasoning_tokens": se(draw_means(toks))}
     result = {"source": str(path), "baseline": baseline, "draws": len(texts(recs[ids[0]])),
               "baseline_draws": len(texts(base_recs[ids[0]])),
               **paired(ok, base_ok, ids),
-              "mean_reasoning_tokens": mean(token_means), "se_reasoning_tokens": se(token_means)}
+              "mean_reasoning_tokens": mean(token_means), "se_reasoning_tokens": se(token_means),
+              **draws_se}
     # Earlier figure definition: both turns of the (first) draw must parse.
     chem = [i for i in ids if all(has_answer(recs[i][k], recs[i].get("think_prefilled", False))
                                   for k in ("response", "turn1_response"))]
@@ -186,7 +196,7 @@ def plurality(stage, labels, ks, min_class_n):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap = argparse.ArgumentParser(description=str(__doc__).splitlines()[0])
     ap.add_argument("--config", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     args = ap.parse_args(argv)
@@ -195,7 +205,7 @@ def main(argv=None):
 
     labels = {int(k): v["corrected"] for k, v in json.loads(Path(cfg["labels"]).read_text())["labels"].items()}
     min_n = cfg.get("min_class_n", 40)
-    report = {"definitions": __doc__.split("Definitions (fixed; see README.md):")[1].strip(),
+    report = {"definitions": str(__doc__).split("Definitions (fixed; see README.md):")[1].strip(),
               "figures": {}, "plurality": {}}
     args.out.mkdir(parents=True, exist_ok=True)
 
@@ -211,12 +221,16 @@ def main(argv=None):
                 points.append({"stage": stage_name, "condition": cond, "delta_accuracy_pp": s["delta_pp"],
                                "mean_reasoning_tokens": s["mean_reasoning_tokens"],
                                "baseline_accuracy_pct": s["baseline_accuracy_pct"],
-                               **({"delta_se_pp": s["se_pp"], "tokens_se": s["se_reasoning_tokens"]}
+                               **({"delta_se_pp": s["se_draws_pp"], "tokens_se": s["se_draws_reasoning_tokens"]}
+                                  if fig.get("error_bars") == "draws" else
+                                  {"delta_se_pp": s["se_pp"], "tokens_se": s["se_reasoning_tokens"]}
                                   if fig.get("error_bars") else {})})
                 print(f"{fig_name} {stage_name} {cond}: {s['delta_pp']:+.2f} ± {s['se_pp']:.2f} pp "
                       f"(draws={s['draws']}, n={s['n']}), {s['mean_reasoning_tokens']:.0f} tokens", flush=True)
         plot = {"stages": list(cfg["stages"]), "points": points,
-                "conditions": [dict(zip(("id", "label", "color", "marker"), c)) for c in fig["conditions"]],
+                # Fig 4 conditions carry a marker, Fig 5 conditions do not.
+                "conditions": [dict(zip(("id", "label", "color", "marker"), c, strict=False))
+                               for c in fig["conditions"]],
                 **fig.get("plot", {})}
         (args.out / f"{fig['plot_file']}.json").write_text(json.dumps(plot, indent=2, ensure_ascii=False) + "\n")
 
@@ -226,7 +240,7 @@ def main(argv=None):
         pl_labels = {i: family_of.get(c, c) for i, c in labels.items()}
         series = []
         for stage_name, stage in cfg["stages"].items():
-            table = plurality(stage, pl_labels, pl["ks"], min_n)
+            table = plurality(stage, pl_labels, pl["ks"], pl.get("min_class_n", min_n))
             report["plurality"][stage_name] = table
             for key, label, color in pl["classes"]:
                 m = table[key]

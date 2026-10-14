@@ -1,16 +1,26 @@
 """Resume only the three authorized 27B rollout streams on H100s.
 
 Ported from run_dir('pipeline_27b')/modal/resume_h100_rollouts.py.
-Launch: python -m modal run --detach src/resonance/stages/qwen3_8_27b/modal_apps/resume_h100_rollouts.py --target {s2_dpo,skip_s2}
+Launch: python -m modal run --detach \
+        src/resonance/stages/qwen3_8_27b/modal_apps/resume_h100_rollouts.py --target {s2_dpo,skip_s2}
 """
 import json
+from datetime import UTC
 from pathlib import Path
+
 import modal
 
 from resonance.paths import run_dir
 from resonance.stages.qwen3_8_27b.config import (
-    ABLATION_VOLUME, APP_ABLATION, APP_EVAL, APP_PIPELINE, APP_RESUME, APP_S1, APP_S2, APP_S3,
-    CONTAINER_ENV, PIPELINE_VOLUME, PROMPTS, RUN_ID, S1_VOLUME, pipeline_root, traces_path, with_code)
+    ABLATION_VOLUME,
+    APP_RESUME,
+    CONTAINER_ENV,
+    PIPELINE_VOLUME,
+    RUN_ID,
+    S1_VOLUME,
+    pipeline_root,
+    with_code,
+)
 
 ROOT = pipeline_root()
 RUN = RUN_ID
@@ -42,10 +52,10 @@ def execute(target, shard):
     import os
     import signal
     import subprocess
-    import sys
     import time
-    from datetime import datetime, timezone
-    from resonance.stages.common import checkpoint, iter_jsonl, sha256, write_json
+    from datetime import datetime
+
+    from resonance.stages.common import checkpoint, sha256, write_json
     assert 0 <= shard < 4
     stage, volume_name, root_path, source = specification(target)
     volume = modal.Volume.from_name(volume_name)
@@ -65,7 +75,7 @@ def execute(target, shard):
     # Preserve failure records; generation validates identity and repairs only a partial final line.
     attempt = out/f'h100-resume-{time.time_ns()}.json'
     journal = {'status': 'running', 'target': target, 'shard': shard, 'gpu_requested': 'H100:2',
-               'started_at': datetime.now(timezone.utc).isoformat(), 'automatic_retries': 0}
+               'started_at': datetime.now(UTC).isoformat(), 'automatic_retries': 0}
     write_json(attempt, journal)
     volume.commit()
     started = time.monotonic()
@@ -94,7 +104,7 @@ def execute(target, shard):
         raise
     finally:
         journal.update(wall_seconds=time.monotonic()-started,
-                       ended_at=datetime.now(timezone.utc).isoformat())
+                       ended_at=datetime.now(UTC).isoformat())
         write_json(attempt, journal)
         volume.commit()
 
@@ -115,7 +125,7 @@ def dpo_rollout(shard: int):
 @app.local_entrypoint()
 def main(target: str):
     import fcntl
-    from datetime import datetime, timezone
+    from datetime import datetime
     stage, _, _, _ = specification(target)
     local = (ROOT/'outputs'/RUN/'s3-from-s2-v5-difficulty-mix-1ep' if target == 's2_dpo'
              else run_dir('ablation_27b')/'outputs'/target)
@@ -124,7 +134,7 @@ def main(target: str):
     with (local/'h100_rollout.lock').open('a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         status = {'status': 'running', 'target': target, 'stage': stage,
-            'started_at': datetime.now(timezone.utc).isoformat(), 'gpu': 'H100:2', 'workers': 4,
+            'started_at': datetime.now(UTC).isoformat(), 'gpu': 'H100:2', 'workers': 4,
             'training_started': False}
         status_path.write_text(json.dumps(status, indent=2))
         try:
@@ -140,6 +150,6 @@ def main(target: str):
             status.update(status='failed', error=str(exc))
             raise
         finally:
-            status['updated_at'] = datetime.now(timezone.utc).isoformat()
+            status['updated_at'] = datetime.now(UTC).isoformat()
             status_path.write_text(json.dumps(status, indent=2))
             print(json.dumps(status), flush=True)

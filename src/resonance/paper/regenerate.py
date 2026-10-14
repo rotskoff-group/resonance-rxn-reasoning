@@ -92,7 +92,7 @@ def review(tag, group, root, smoke):
 
 
 def main():
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap = argparse.ArgumentParser(description=str(__doc__).splitlines()[0])
     ap.add_argument("action", choices=["fresh", "review"])
     ap.add_argument("--tag", required=True, choices=sorted(CFG["models"]))
     ap.add_argument("--group", choices=sorted(GROUPS))

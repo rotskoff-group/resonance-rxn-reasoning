@@ -7,20 +7,31 @@ Launch: python -m modal run --detach src/resonance/stages/qwen3_8_27b/modal_apps
 """
 import json
 import pathlib
+
 import modal
 
 from resonance.paths import run_dir
 from resonance.stages.qwen3_8_27b.config import (
-    ABLATION_VOLUME, APP_ABLATION, APP_EVAL, APP_PIPELINE, APP_RESUME, APP_S1, APP_S2, APP_S3,
-    CONTAINER_ENV, PIPELINE_VOLUME, PROMPTS, RUN_ID, S1_VOLUME, pipeline_root, traces_path, with_code)
+    ABLATION_VOLUME,
+    APP_ABLATION,
+    BASE_REVISION,
+    CONTAINER_ENV,
+    PROMPTS,
+    RUN_ID,
+    S1_VOLUME,
+    SOURCE_SHA,
+    with_code,
+)
+from resonance.stages.qwen3_8_27b.config import BASE_MODEL as BASE_ID
 
 ROOT = run_dir('ablation_27b')
-from resonance.stages.qwen3_8_27b.config import BASE_MODEL as BASE_ID, BASE_REVISION, SOURCE_SHA
+
 VOLUME = ABLATION_VOLUME
 app = modal.App(APP_ABLATION)
 data_volume = modal.Volume.from_name(VOLUME, create_if_missing=True)
 s1_volume = modal.Volume.from_name(S1_VOLUME)
-mounts = {'/pipeline': data_volume, '/s1': s1_volume}
+mounts: dict[str | pathlib.PurePosixPath, modal.Volume | modal.CloudBucketMount] = (
+    {'/pipeline': data_volume, '/s1': s1_volume})
 
 # Same package versions as S1; add dependencies before Modal's live source mounts.
 train_image = (modal.Image.from_registry('nvidia/cuda:12.6.0-devel-ubuntu22.04', add_python='3.11')
@@ -74,8 +85,9 @@ def subprocess_run(cmd, timeout, env=None):
 def initialize(arm: str, stage: str, train_raw: bytes, test_raw: bytes,
                prompts_raw: bytes, s2_policy: str):
     import hashlib
-    import sys
+
     from huggingface_hub import snapshot_download
+
     from resonance.stages.common import checkpoint, write_json
     data_volume.reload()
     s1_volume.reload()
@@ -137,8 +149,12 @@ def initialize(arm: str, stage: str, train_raw: bytes, test_raw: bytes,
 infer_image = (modal.Image.from_registry('nvidia/cuda:12.8.1-cudnn-devel-ubuntu22.04', add_python='3.11')
     # Triton needs a host compiler; FlashInfer also JIT-compiles CUDA kernels.
     .entrypoint([]).apt_install('build-essential')
-    .run_commands("printf 'int main(void) { return 0; }\\n' | cc -x c - -o /tmp/compiler-smoke && /tmp/compiler-smoke && rm /tmp/compiler-smoke")
-    .run_commands("printf '#include <cuda_runtime.h>\\n__global__ void smoke(float *x) { x[threadIdx.x] = 0.0f; }\\n' > /tmp/compiler-smoke.cu && /usr/local/cuda/bin/nvcc -std=c++20 -arch=sm_90a -static-global-template-stub=false -c /tmp/compiler-smoke.cu -o /tmp/compiler-smoke.o && rm /tmp/compiler-smoke.cu /tmp/compiler-smoke.o")
+    .run_commands("printf 'int main(void) { return 0; }\\n' | cc -x c - -o /tmp/compiler-smoke"
+                  " && /tmp/compiler-smoke && rm /tmp/compiler-smoke")
+    .run_commands("printf '#include <cuda_runtime.h>\\n__global__ void smoke(float *x) { x[threadIdx.x] = 0.0f; }\\n'"
+                  " > /tmp/compiler-smoke.cu && /usr/local/cuda/bin/nvcc -std=c++20 -arch=sm_90a"
+                  " -static-global-template-stub=false -c /tmp/compiler-smoke.cu -o /tmp/compiler-smoke.o"
+                  " && rm /tmp/compiler-smoke.cu /tmp/compiler-smoke.o")
     .uv_pip_install('vllm==0.18.1', 'transformers==4.57.6', 'rdkit==2025.9.6')
     .env({'CUDA_HOME': '/usr/local/cuda', 'TOKENIZERS_PARALLELISM': 'false',
           'VLLM_WORKER_MULTIPROC_METHOD': 'spawn'})
@@ -151,8 +167,8 @@ infer_image = with_code(infer_image)
 def rollout(arm: str, stage: str, shard: int, evaluation: bool = False,
             resume_failed: bool = False):
     import os
-    import sys
     import time
+
     from resonance.stages.common import checkpoint, write_json
     data_volume.reload()
     s1_volume.reload()
@@ -213,8 +229,8 @@ def prepare(arm: str, stage: str):
               timeout=24*3600, retries=0, max_containers=1)
 def train(arm: str, stage: str, segment: int = 0):
     import os
-    import sys
     import time
+
     from resonance.stages.common import write_json
     data_volume.reload()
     s1_volume.reload()
@@ -245,7 +261,6 @@ def train(arm: str, stage: str, segment: int = 0):
 @app.function(image=train_image, volumes=mounts, cpu=16, memory=256*1024,
               timeout=3*3600, retries=0)
 def finish(arm: str, stage: str):
-    import sys
     from resonance.stages.common import checkpoint, sha256, write_json
     data_volume.reload()
     s1_volume.reload()
@@ -269,7 +284,6 @@ def finish(arm: str, stage: str):
 @app.function(image=train_image, volumes=mounts, cpu=2, memory=8192,
               timeout=1200, retries=0)
 def summarize_eval(arm: str, stage: str):
-    import sys
     from resonance.stages.common import iter_jsonl, write_json
     data_volume.reload()
     root, _ = paths(arm, stage)

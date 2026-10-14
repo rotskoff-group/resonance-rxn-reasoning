@@ -8,7 +8,9 @@ import json
 import random
 from collections import Counter, defaultdict
 from pathlib import Path
-from datasets import load_from_disk
+
+from datasets import Dataset, load_from_disk
+
 from resonance.stages.common import sha256
 from resonance.stages.qwen3_8_27b.config import RUN_ID, pipeline_root
 
@@ -20,7 +22,9 @@ OUT = RUN/'S2_V5_difficulty_mix_dataset'
 def main():
     assert not OUT.exists(), f'Refusing to overwrite {OUT}'
     data = load_from_disk(str(SOURCE/'dataset'))
-    metadata = data.select_columns(['row_idx','s1_pass_at_8','source_type','reaction_class','prompt_tokens','assistant_tokens'])
+    assert isinstance(data, Dataset)
+    metadata = data.select_columns(['row_idx', 's1_pass_at_8', 'source_type', 'reaction_class',
+                                    'prompt_tokens', 'assistant_tokens'])
     hard, gold, easy = [], [], defaultdict(list)
     for i, row in enumerate(metadata):
         k = row['s1_pass_at_8']
@@ -48,13 +52,18 @@ def main():
     selected = sorted(hard + gold + replay)
     assert len(set(selected)) == len(selected)
     ds = data.select(selected)
-    stats = Counter(); tokens = Counter(); classes = Counter(); ids = set()
+    stats = Counter()
+    tokens = Counter()
+    classes = Counter()
+    ids = set()
     for row in ds.select_columns(metadata.column_names):
         k = row['s1_pass_at_8']
         group = 'gold_fallback' if k == 0 else 'easy_replay' if k == 8 else 'mixed_success'
         stats[group] += 1
-        tokens['prompt'] += row['prompt_tokens']; tokens['assistant'] += row['assistant_tokens']
-        classes[row['reaction_class']] += 1; ids.add(row['row_idx'])
+        tokens['prompt'] += row['prompt_tokens']
+        tokens['assistant'] += row['assistant_tokens']
+        classes[row['reaction_class']] += 1
+        ids.add(row['row_idx'])
     assert ids == set(range(40000))
     assert stats['mixed_success'] == len(hard) and stats['easy_replay'] == replay_target
     OUT.mkdir()
@@ -66,17 +75,21 @@ def main():
             if i in wanted:
                 r = json.loads(line)
                 assert r['dataset_row'] == i
-                r['source_dataset_row'] = i; r['dataset_row'] = n
-                target.write(json.dumps(r)+'\n'); n += 1
+                r['source_dataset_row'] = i
+                r['dataset_row'] = n
+                target.write(json.dumps(r)+'\n')
+                n += 1
     assert n == len(ds)
     manifest = {'name':OUT.name,'examples':len(ds),'unique_reactions':len(ids),
                 'policy':{'difficulty':'number of usable exact-correct S1 completions out of 8 on TRAIN only',
                           'mixed_success':'all correct completions from 1–7/8 reactions',
-                          'easy_replay':'one random completion per 8/8 reaction, plus a second for randomly chosen reactions to approach 2:1 mixed/easy ratio',
+                          'easy_replay':'one random completion per 8/8 reaction, plus a second for randomly chosen '
+                                        'reactions to approach 2:1 mixed/easy ratio',
                           'zero_success':'one existing gold-answer-only fallback per 0/8 reaction',
                           'selection_seed':42,'loss':'assistant tokens only','max_context':2048,
                           'epochs':1,'initialization':'S1','class_selection':'none; all 40000 train reactions retained',
-                          'rationale':'Practical starting mix, not a validated optimal ratio. Emphasize unreliable successes while retaining all reaction coverage before DPO.'},
+                          'rationale':'Practical starting mix, not a validated optimal ratio. Emphasize unreliable '
+                                      'successes while retaining all reaction coverage before DPO.'},
                 'groups':dict(stats),'class_counts':dict(sorted(classes.items())),
                 'tokens':{**tokens,'total':sum(tokens.values())},
                 'source_manifest':str(SOURCE/'manifest.json'),

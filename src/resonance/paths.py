@@ -31,16 +31,18 @@ RUN_DIRS = {
     "relabel": "relabel",
     # references
     "teacher_bench": "teacher_bench",           # Kimi K3 teacher benchmark
-    "opus_bench": "opus_bench",
+    "opus_bench": "opus_bench",                 # Claude Opus 5 benchmark
+    "gpt6_bench": "gpt6_bench",                 # GPT-6-Astra benchmark
     # Qwen3-8B lineage
     "s1_8b": "s1_8b",                           # S1 benchmark + rollouts
     "s2_8b": "s2_8b",                           # S2 filter + training
     "s2_8b_bench": "s2_8b_bench",               # S2 benchmark
     "s3_8b": "s3_8b",                           # S3 generation, mining, DPO, benchmark
+    "ablation_8b": "ablation_8b",               # skip-S2 stage ablation (DPO on S1)
     # Qwen3.8-27B lineage
     "s1_27b": "s1_27b",
     "pipeline_27b": "pipeline_27b",             # base, S1 eval, S2, S3
-    "ablation_27b": "ablation_27b",
+    "ablation_27b": "ablation_27b",             # skip-S2 stage ablation (DPO on S1)
     "answer_only_27b": "answer_only_27b",
     # analysis
     "metareasoning": "metareasoning",

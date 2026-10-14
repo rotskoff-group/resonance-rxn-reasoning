@@ -6,7 +6,7 @@ For every multi-draw file in the summary config (fresh pool and 8-rollout
 conditions), tests whether per-position accuracy is homogeneous with a chi-square
 test over draw positions. Writes a JSON report; exits 1 if any file has p < --alpha.
 
-    python -m resonance.paper.draw_independence --config metareasoning_summary.json --out <dir>
+    python -m resonance.paper.draw_independence --config kimi_no_id_paper.json --out <dir>
 """
 import argparse
 import json
@@ -55,13 +55,13 @@ def per_position(path):
             continue
         ok = [classify({**r, "response": t})[0] == "correct" for t in r["responses"]]
         hits = hits or [0] * len(ok)
-        hits = [h + o for h, o in zip(hits, ok)]
+        hits = [h + o for h, o in zip(hits, ok, strict=True)]
         n += 1
     return hits, n
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap = argparse.ArgumentParser(description=str(__doc__).splitlines()[0])
     ap.add_argument("--config", type=Path, required=True,
                     help="summary config (path, or a name in configs/paper/figures)")
     ap.add_argument("--out", type=Path, required=True)

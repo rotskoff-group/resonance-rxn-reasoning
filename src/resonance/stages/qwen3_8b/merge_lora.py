@@ -8,15 +8,17 @@ Reads outputs/model (adapter) and writes outputs/benchmark_model under run_dir('
 The base is the adapter's recorded `base_model_name_or_path`.
 """
 import json
+
 from resonance.paths import run_dir
-from resonance.stages.common import checkpoint,sha256,write_json
+from resonance.stages.common import checkpoint, sha256, write_json
+
 ROOT=run_dir('s3_8b')
 
 
 def main():
     import torch
     from peft import PeftModel
-    from transformers import AutoModelForCausalLM,AutoTokenizer
+    from transformers import AutoModelForCausalLM, AutoTokenizer
     torch.set_num_threads(8)
     adapter=ROOT/'outputs/model'
     out=ROOT/'outputs/benchmark_model'
@@ -29,7 +31,8 @@ def main():
               'adapter_config_sha256':sha256(adapter/'adapter_config.json'),'steps':3000}
     if (out/'MERGE_COMPLETE.json').exists():
         assert json.loads((out/'MERGE_COMPLETE.json').read_text())==identity
-        checkpoint(out); return
+        checkpoint(out)
+        return
     assert not out.exists(), f'Inspect partial output before retrying: {out}'
     print(json.dumps(identity),flush=True)
     model=AutoModelForCausalLM.from_pretrained(base,torch_dtype=torch.bfloat16,device_map='cpu')

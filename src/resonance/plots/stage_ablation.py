@@ -55,7 +55,7 @@ def plot(data):
         c = fam["correct"].get(key)
         return np.nan if c is None else 100 * c / fam["n_test"]
 
-    has_finished = all("base_finished" in f for f in fams)
+    has_finished = data.get("show_finished", True) and all("base_finished" in f for f in fams)
     base_cols = [[acc(f, "base")] + ([100 * f["base_correct_finished"] / f["base_finished"]]
                                      if has_finished else []) for f in fams]
     base = np.array(base_cols)
@@ -73,22 +73,39 @@ def plot(data):
     if tested.any():
         stars[tested] = np.array(holm(list(pvals[tested]))) < alpha
 
-    fig = plt.figure(figsize=(style.TEXTWIDTH, 3.1), layout="constrained")
-    gs = fig.add_gridspec(1, 3, width_ratios=[base.shape[1], len(paths), len(increments)],
-                          wspace=0.04)
+    # Fixed grid (not constrained layout) so the gaps between panels are equal.
+    fig = plt.figure(figsize=data.get("figsize", (style.TEXTWIDTH, 3.1)))
+    m = {"left": 0.25, "right": 0.99, "top": 0.9, "bottom": 0.27, **data.get("margins", {})}
+    widths = [max(base.shape[1], data.get("base_width", 1.8)), len(paths), len(increments)]
+    gs = fig.add_gridspec(1, 3, width_ratios=widths,
+                          wspace=data.get("panel_gap", 0.1), **m)
     ax_a, ax_b, ax_c = (fig.add_subplot(gs[0, i]) for i in range(3))
-    rows = [f"{f.get('short', f['name'])} ({f['n_test']})" for f in fams]
+    # Optional presentation keys: annot_size, tick_size, title_size, row_counts (default true).
+    sizes = dict(annot_size=data.get("annot_size"), tick_size=data.get("tick_size"))
+    rows = [f"{f.get('short', f['name'])} ({f['n_test']})" if data.get("row_counts", True)
+            else f.get("short", f["name"]) for f in fams]
     style.annotated_heatmap(ax_a, base, style.SEQUENTIAL, mpl.colors.Normalize(0, 100),
-                            ["All", "Finished"][:base.shape[1]], rows)
+                            ["All", "Finished"] if base.shape[1] == 2 else [""], rows, **sizes)
     finite = gain[np.isfinite(gain)]
     style.annotated_heatmap(ax_b, gain, style.SEQUENTIAL,
                             mpl.colors.Normalize(0, finite.max() if finite.size else 1),
-                            [p["label"] for p in paths], fmt="{:+.0f}")
+                            [p["label"] for p in paths], fmt="{:+.0f}", **sizes)
     bound = max(2.0, float(np.ceil(np.nanmax(np.abs(inc))))) if tested.any() else 2.0
-    style.annotated_heatmap(ax_c, inc, style.DIVERGING,
-                            mpl.colors.TwoSlopeNorm(vmin=-bound, vcenter=0, vmax=bound),
-                            [s["label"] for s in increments], fmt="{:+.1f}", stars=stars)
+    norm_c = mpl.colors.TwoSlopeNorm(vmin=-bound, vcenter=0, vmax=bound)
+    style.annotated_heatmap(ax_c, inc, style.DIVERGING, norm_c,
+                            [s["label"] for s in increments], fmt="{:+.1f}", stars=stars, **sizes)
+    if data.get("colorbar", False):
+        # Diverging scale of panel (c), just right of it.
+        box = ax_c.get_position()
+        cax = fig.add_axes((box.x1 + 0.012, box.y0, 0.014, box.height))
+        cb = fig.colorbar(mpl.cm.ScalarMappable(norm=norm_c, cmap=style.DIVERGING), cax=cax,
+                          ticks=[-bound, 0, bound])
+        cb.ax.set_yticklabels([f"{-bound:+.0f}", "0", f"{bound:+.0f}"])
+        cb.ax.tick_params(labelsize=data.get("tick_size", style.FS_TICK), colors="black", length=2)
+        # matplotlib stub declares the colorbar outline as Spines, not Spine.
+        cb.outline.set_visible(False)  # ty: ignore[call-non-callable]
     for ax, title in zip((ax_a, ax_b, ax_c),
-                         ("(a) Base (%)", "(b) Gain over base", "(c) Stage increment")):
-        ax.set_title(title, fontsize=style.FS_TICK, loc="left", pad=4)
+                         data.get("titles", ("(a) Base (%)", "(b) Gain over base (pp)",
+                                             "(c) Stage increment (pp)")), strict=False):
+        ax.set_title(title, fontsize=data.get("title_size", style.FS_TICK), loc="left", pad=4)
     return fig

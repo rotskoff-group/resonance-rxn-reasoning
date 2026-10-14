@@ -20,17 +20,19 @@ from pathlib import Path
 import torch
 from transformers import AutoTokenizer
 
-# ── Paths ─────────────────────────────────────────────────────────────────────
-from resonance.stages.qwen3_8b._common import S2_MODEL, TRAIN_JSON as _TRAIN_JSON
+from resonance.data.parsers.benchmark.uspto_50k import ReactionPredictionUSPTO
+from resonance.data.prompts.benchmark.forward_rxn import ForwardRxnPrompt
 from resonance.paths import run_dir
+from resonance.stages.qwen3_8b._common import S2_MODEL
+from resonance.stages.qwen3_8b._common import TRAIN_JSON as _TRAIN_JSON
+
+# ── Paths ─────────────────────────────────────────────────────────────────────
 
 SFT_MODEL = str(S2_MODEL)
 TRAIN_JSON = str(_TRAIN_JSON)
 OUT_PATH   = str(run_dir("s3_8b") / "outputs/completions.jsonl")
 
 # ── Prompt building ───────────────────────────────────────────────────────────
-from resonance.data.parsers.benchmark.uspto_50k import ReactionPredictionUSPTO
-from resonance.data.prompts.benchmark.forward_rxn import ForwardRxnPrompt
 
 
 def build_prompts(train_json_path: str) -> tuple[list[dict], list[str], list[str]]:
@@ -49,7 +51,7 @@ def build_prompts(train_json_path: str) -> tuple[list[dict], list[str], list[str
     ground_truths = []
     reaction_ids = []
 
-    for rxn, raw_rxn in zip(reactions, raw):
+    for rxn, raw_rxn in zip(reactions, raw, strict=True):
         user_content = parser.parse_reaction(task_template, rxn).strip()
         messages = [
             {"role": "system", "content": system_content},
@@ -131,7 +133,7 @@ def main():
     print(f"Writing → {out_path}")
     written = 0
     with open(out_path, "w") as f:
-        for rid, msgs, completions, gt in zip(reaction_ids, messages_list, all_completions, ground_truths):
+        for rid, msgs, completions, gt in zip(reaction_ids, messages_list, all_completions, ground_truths, strict=True):
             record = {
                 "row_idx":       lo + written,
                 "reaction_id":    rid,

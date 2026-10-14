@@ -25,12 +25,12 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
-from rdkit import Chem, RDLogger
+from rdkit import Chem, rdBase
 from rdkit.Chem import rdFMCS
 
-RDLogger.DisableLog("rdApp.*")
-
 from resonance.paths import run_dir
+
+rdBase.DisableLog("rdApp.*")
 
 TEST_JSON = run_dir("uspto") / "test.json"
 RESULTS = run_dir("teacher_bench") / "outputs/bench_kimik3_modal/results.jsonl"
@@ -254,7 +254,7 @@ def main():
     test_json, results, out = args.test_json, args.results, args.out
 
     test = json.load(open(test_json))
-    res = [json.loads(l) for l in open(results)]
+    res = [json.loads(line) for line in open(results)]
     if args.limit:
         res = res[:args.limit]
 

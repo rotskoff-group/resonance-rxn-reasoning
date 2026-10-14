@@ -26,10 +26,12 @@ import collections
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from loguru import logger
+
 sys.path.insert(0, str(Path(__file__).resolve().parent / "frozen"))
 from selfcorrect_runner import turn1_messages
 from vllm import LLM, SamplingParams
@@ -143,14 +145,15 @@ def main():
         logger.info(f"=== {tag} ({spec.path}) | {len(src)} items | "
                     f"max_tokens={mt} max_model_len={mml}")
 
-        llm_kwargs = dict(model=spec.path, tensor_parallel_size=args.tp, dtype="bfloat16",
+        llm_kwargs: dict[str, Any] = dict(model=spec.path, tensor_parallel_size=args.tp, dtype="bfloat16",
                           max_model_len=mml, gpu_memory_utilization=args.gpu_mem,
                           seed=args.seed, enable_prefix_caching=True)
         lora_req = None
-        if getattr(spec, "lora_path", None):
+        lora_path = getattr(spec, "lora_path", None)
+        if lora_path:
             from vllm.lora.request import LoRARequest
             llm_kwargs.update(enable_lora=True, max_lora_rank=128)
-            lora_req = LoRARequest("arm", 1, spec.lora_path)
+            lora_req = LoRARequest("arm", 1, lora_path)
         llm = LLM(**llm_kwargs)
 
         convs = [turn1_messages(r["turn1"][tag]) for r in src]
@@ -164,7 +167,7 @@ def main():
                 p = base_sp.clone()
                 p.seed = args.seed + int(r["eval_idx"])
                 sp.append(p)
-        kw = {"lora_request": lora_req} if lora_req else {}
+        kw: dict[str, Any] = {"lora_request": lora_req} if lora_req else {}
         outs = llm.chat(convs, sampling_params=sp, **kw)
 
         fresh_dir = RUN / args.fresh_dir / tag
@@ -172,7 +175,7 @@ def main():
         fresh_path = fresh_dir / "C5_fresh.jsonl"
         n_short = 0
         with open(fresh_path, "w") as fh:
-            for r, o in zip(src, outs):
+            for r, o in zip(src, outs, strict=True):
                 t1 = r["turn1"][tag]
                 draws = list(o.outputs)
                 if len(draws) < args.k:

@@ -6,12 +6,13 @@ Ported from the inline check in run_dir('traces')/bash_scripts/04_sft_no_id_8gpu
 """
 import sys
 
-from datasets import load_from_disk
+from datasets import Dataset, load_from_disk
 from transformers import AutoTokenizer
 
 
 def main() -> None:
     dataset = load_from_disk(sys.argv[1])
+    assert isinstance(dataset, Dataset)
     tok = AutoTokenizer.from_pretrained("Qwen/Qwen3-8B")
     lengths = []
     for batch in dataset.iter(batch_size=256):

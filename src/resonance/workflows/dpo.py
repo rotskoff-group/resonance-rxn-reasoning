@@ -10,6 +10,7 @@ as the reference — no second model copy in memory.
 
 import os
 import time
+from typing import Any, cast
 
 import hydra
 import wandb
@@ -74,7 +75,7 @@ def main(cfg: DictConfig) -> None:
     logger.info(f"  Columns: {train_dataset.column_names}")
 
     # ── Training config ───────────────────────────────────────────────────────
-    training_args = DPOConfig(**OmegaConf.to_container(cfg.training_args, resolve=True))
+    training_args = DPOConfig(**cast(dict[str, Any], OmegaConf.to_container(cfg.training_args, resolve=True)))
     logger.info(f"loss_type={training_args.loss_type}, "
                 f"loss_weights={training_args.loss_weights}, "
                 f"beta={training_args.beta}, "

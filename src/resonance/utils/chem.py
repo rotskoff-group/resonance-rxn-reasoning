@@ -1,7 +1,6 @@
-from typing import Optional
 
 
-def reverse_smarts(smarts: str) -> Optional[str]:
+def reverse_smarts(smarts: str) -> str | None:
     """Flip a forward reaction SMARTS into retrosynthetic direction.
 
     Handles both 2-part (reactants>>products) and 3-part

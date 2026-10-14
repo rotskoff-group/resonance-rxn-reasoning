@@ -12,12 +12,14 @@ import argparse
 import json
 from collections import defaultdict
 from pathlib import Path
+from typing import Any
 
-from rdkit import Chem, RDLogger
+from rdkit import Chem, rdBase
+
 from resonance.evaluation.extractors import extract_forward_rxn
 from resonance.paths import run_dir
 
-RDLogger.DisableLog("rdApp.*")
+rdBase.DisableLog("rdApp.*")
 ROOT = run_dir("synthetic_ood")
 
 
@@ -56,7 +58,7 @@ def main():
     data = json.loads((ROOT / "data" / args.suite / "test.json").read_text())
     labels = json.loads((ROOT / "data" / args.suite / "labels.json").read_text())["labels"]
     records = load(out_dir)
-    groups = defaultdict(lambda: {"rows": 0, "correct": 0, "valid": 0})
+    groups: defaultdict[str, dict[str, Any]] = defaultdict(lambda: {"rows": 0, "correct": 0, "valid": 0})
     rows = []
     for idx, rec in sorted(records.items()):
         gold = canonical(data[idx]["original_smiles"]["End Product"])

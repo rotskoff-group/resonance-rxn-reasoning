@@ -12,9 +12,14 @@ from pathlib import Path
 import torch
 import torch.distributed as dist
 from datasets import load_from_disk
-from torch.utils.data import SequentialSampler
-from transformers import (AutoTokenizer, Qwen3_5ForConditionalGeneration,
-                          Trainer, TrainerCallback, TrainingArguments, set_seed)
+from transformers import (
+    AutoTokenizer,
+    Qwen3_5ForConditionalGeneration,  # ty: ignore[unresolved-import]  (transformers 5.x, in the Modal image)
+    Trainer,
+    TrainerCallback,
+    TrainingArguments,
+    set_seed,
+)
 
 if __name__ == '__main__':
     OUT = Path(os.environ["PILOT_OUTPUT"])
@@ -33,7 +38,8 @@ if __name__ == '__main__':
     if global_rank == 0:
         import importlib.metadata
         (OUT / "packages.json").write_text(json.dumps({p: importlib.metadata.version(p) for p in
-            ["torch", "transformers", "accelerate", "deepspeed", "flash-linear-attention", "causal-conv1d", "tilelang"]}, indent=2))
+            ["torch", "transformers", "accelerate", "deepspeed", "flash-linear-attention", "causal-conv1d",
+             "tilelang"]}, indent=2))
     stats = json.loads(Path("/pilot/data_stats.json").read_text())
     ds_config = {
         "bf16": {"enabled": True}, "train_micro_batch_size_per_gpu": microbatch,
@@ -49,7 +55,8 @@ if __name__ == '__main__':
         per_device_train_batch_size=microbatch, gradient_accumulation_steps=accumulation,
         learning_rate=2e-5, warmup_steps=100, lr_scheduler_type="linear", bf16=True,
         gradient_checkpointing=checkpointing, gradient_checkpointing_kwargs={"use_reentrant": False},
-        deepspeed=ds_config, optim="adamw_torch", logging_steps=10, save_strategy="steps", save_steps=500, save_total_limit=2,
+        deepspeed=ds_config, optim="adamw_torch", logging_steps=10, save_strategy="steps", save_steps=500,
+        save_total_limit=2,
         report_to="none", dataloader_num_workers=0, remove_unused_columns=False,
         ddp_timeout=1200, seed=42, disable_tqdm=True,
     )

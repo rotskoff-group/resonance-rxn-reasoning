@@ -43,7 +43,7 @@ def plot(data):
                              sharey=True, layout="constrained")
     axes = [axes] if len(stages) == 1 else list(axes)
     top = max(max(s["accuracy_pct"]) for s in data["series"])
-    for stage, ax in zip(stages, axes):
+    for stage, ax in zip(stages, axes, strict=True):
         for s in (s for s in data["series"] if s["stage"] == stage):
             ax.plot(ks, s["accuracy_pct"], "-", color=colors[s["label"]], lw=1.5 * style.MARKER_SIZE / 5,
                     marker="o", ms=style.MARKER_SIZE * 0.7, markeredgecolor="white", markeredgewidth=0.7)
@@ -59,11 +59,12 @@ def plot(data):
     n_by_label = {}
     for s in data["series"]:
         n_by_label.setdefault(s["label"], s["n"])
-    handles = [Line2D([0], [0], color=colors[l], lw=1.5 * style.MARKER_SIZE / 5, marker="o",
+    handles = [Line2D([0], [0], color=colors[lab], lw=1.5 * style.MARKER_SIZE / 5, marker="o",
                       ms=style.MARKER_SIZE * 0.7,
-                      markeredgecolor="white", markeredgewidth=0.7) for l in labels]
-    names = [f"{l} (n={n_by_label[l]})" if data.get("legend_n", True) else l for l in labels]
+                      markeredgecolor="white", markeredgewidth=0.7) for lab in labels]
+    names = [f"{lab} (n={n_by_label[lab]})" if data.get("legend_n", True) else lab for lab in labels]
     fig.legend(handles, names,
-               loc="outside lower center", ncol=3, fontsize=style.FS_LEG,
+               loc="outside lower center", ncol=data.get("legend_ncol", 3),
+               fontsize=style.FS_LEG + data.get("legend_size_offset", 0),
                handlelength=1.6, columnspacing=1.2)
     return fig

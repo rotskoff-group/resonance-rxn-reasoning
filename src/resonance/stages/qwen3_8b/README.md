@@ -28,12 +28,37 @@ Launchers live in `launchers/qwen3_8b/` (submit from the repository root, `mkdir
 GPU launchers take the shared locks in `RESONANCE_GPU_LOCK_DIR` and wait for free cards,
 because the scheduler on the original machine did not track GPU memory.
 
+## Before you start
+
+- **Environment:** `uv sync --frozen --extra train` (adds flash-attn), and export
+  `RESONANCE_DATA_ROOT` in the shell you submit from. The launchers use `RESONANCE_PY`
+  (default `python`) and `RESONANCE_HF_CACHE`.
+- **Inputs:** `python -m resonance.download all` places the USPTO-50k split and the teacher
+  traces, plus every stage's released training data, so any stage can start from the released
+  outputs of the one before it.
+- **Base model and logging:** the base model `Qwen/Qwen3-8B` downloads from the Hugging Face
+  Hub. The SFT configs log to Weights & Biases (`report_to: wandb`): run `wandb login`, or set
+  `WANDB_MODE=disabled` for a run without it.
+- **Resources:**
+
+  | Steps | GPUs | CPUs / RAM | Wall time |
+  |---|---|---|---|
+  | S1 SFT, S2 SFT | 8 × 80 GB (each with ≥ 78 GB free) | 64 / 128 GB | 48 h (S1), 96 h (S2) |
+  | S3 DPO | 8 | 16 / 256 GB | 48 h |
+  | S1 rollouts | 4 | 32 / 192 GB | 48 h |
+  | benchmarks | 2 | 16 / 64 GB | 24–48 h |
+  | S3 completions | 1 per shard (8 shards) | 4 / 32 GB | 24 h |
+  | filtering, pair mining, merges, evaluations | none | ≤ 8 / 128 GB | ≤ 2 h |
+
+  S1 SFT refuses to start with less than 300 GB of free disk (full-state checkpoints).
+  Training GPU-hours for the paper's runs: 79.8 (S1), 46.3 (S2), 20.4 (S3), on H100.
+
 ## Recorded quirks (kept as run; changing them changes the published numbers)
 
-* **System prompts differ by step.** S1 SFT uses the short prep prompt in `s1_prep.py`;
+* **System prompts differ by step.** S1 SFT uses the prep prompt in `s1_prep.py`;
   S2 rollouts (`sample_rollouts.py`) and S3 completions (`generate_completions.py`, via
-  `ForwardRxnPrompt(system_prompt_option="rules")`) use the "rules" prompt; every benchmark
-  uses the "none" prompt. The benchmark configs set `prompt_kwargs`, which
+  `ForwardRxnPrompt(system_prompt_option="rules")`) use the "rules" prompt (the paper's *long*
+  system prompt); every benchmark uses the "none" prompt (the paper's *short* one). The benchmark configs set `prompt_kwargs`, which
   `workflows/benchmark.py` does not read (it reads `system_prompt_kwargs`), so "none" is what
   actually ran. S3's benchmark replays the S1 benchmark's saved prompts, so it matches.
 * **S2 world size changed mid-run.** Steps 1-500 ran on 4 GPUs (2 x 4 x 4 = effective batch

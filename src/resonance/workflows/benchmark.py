@@ -10,18 +10,20 @@ This script:
 
 import json
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, cast
+from typing import Any, cast
 
 import hydra
 import wandb
 from loguru import logger
 from omegaconf import DictConfig, OmegaConf
+
 from resonance.data import parsers, prompts
 from resonance.data.parsers.base import Parser
 from resonance.data.prompts.base import Prompt
-from resonance.training.formatting_functions import build_messages, prepare_data_samples
 from resonance.inference.backends import InferenceBackend
+from resonance.training.formatting_functions import build_messages, prepare_data_samples
 from resonance.training.instantiators import instantiate_backend
 
 
@@ -44,9 +46,9 @@ class BenchmarkRunner:
         prompt: Prompt,
         backend: InferenceBackend,
         representation: str = "smiles",
-        system_prompt_kwargs: Optional[Dict[str, Any]] = None,
-        task_template_kwargs: Optional[Dict[str, Any]] = None,
-        parser_kwargs: Optional[Dict[str, Any]] = None,
+        system_prompt_kwargs: dict[str, Any] | None = None,
+        task_template_kwargs: dict[str, Any] | None = None,
+        parser_kwargs: dict[str, Any] | None = None,
     ):
         self.parser = parser
         self.prompt = prompt
@@ -56,7 +58,7 @@ class BenchmarkRunner:
         self.task_template_kwargs = task_template_kwargs or {}
         self.parser_kwargs = parser_kwargs or {}
 
-    def load_samples(self, max_samples: int = 0) -> List[Dict[str, Any]]:
+    def load_samples(self, max_samples: int = 0) -> list[dict[str, Any]]:
         """Load data and build one sample dict per data point.
 
         Each dict contains:
@@ -93,9 +95,9 @@ class BenchmarkRunner:
 
     def run_inference(
         self,
-        samples: List[Dict[str, Any]],
-        save_callback: Optional[Callable[[int, str], None]] = None,
-    ) -> List[str]:
+        samples: list[dict[str, Any]],
+        save_callback: Callable[[int, str], None] | None = None,
+    ) -> list[str]:
         """Build messages for all samples and dispatch to the backend."""
         messages_list = [build_messages(s) for s in samples]
         return self.backend.generate(messages_list, save_callback=save_callback)
@@ -117,7 +119,7 @@ class BenchmarkRunner:
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
         with open(output_file, "w") as f:
-            buffer: List[Dict[str, Any]] = []
+            buffer: list[dict[str, Any]] = []
 
             def flush_buffer() -> None:
                 for rec in buffer:
@@ -127,7 +129,7 @@ class BenchmarkRunner:
 
             def save_callback(idx: int, response: str) -> None:
                 sample = samples[idx]
-                record: Dict[str, Any] = {
+                record: dict[str, Any] = {
                     "idx": sample["idx"],
                     "system_prompt": sample["system_prompt"],
                     "task_prompt": sample["task_prompt"],
@@ -192,7 +194,7 @@ def main(cfg: DictConfig) -> None:
 
     parser_init_kwargs = (
         cast(
-            Dict[str, Any], OmegaConf.to_container(cfg.parser_init_kwargs, resolve=True)
+            dict[str, Any], OmegaConf.to_container(cfg.parser_init_kwargs, resolve=True)
         )
         if cfg.get("parser_init_kwargs")
         else {}
@@ -204,19 +206,19 @@ def main(cfg: DictConfig) -> None:
         backend=instantiate_backend(cfg.inference),
         representation=cfg.representation,
         system_prompt_kwargs=cast(
-            Dict[str, Any],
+            dict[str, Any],
             OmegaConf.to_container(cfg.system_prompt_kwargs, resolve=True),
         )
         if cfg.get("system_prompt_kwargs")
         else None,
         task_template_kwargs=cast(
-            Dict[str, Any],
+            dict[str, Any],
             OmegaConf.to_container(cfg.task_template_kwargs, resolve=True),
         )
         if cfg.get("task_template_kwargs")
         else None,
         parser_kwargs=cast(
-            Dict[str, Any], OmegaConf.to_container(cfg.parser_kwargs, resolve=True)
+            dict[str, Any], OmegaConf.to_container(cfg.parser_kwargs, resolve=True)
         )
         if cfg.parser_kwargs
         else None,

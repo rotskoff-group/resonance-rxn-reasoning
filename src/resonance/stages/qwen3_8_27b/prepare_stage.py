@@ -7,6 +7,7 @@ import argparse
 import json
 import random
 from pathlib import Path
+
 from resonance.stages.common import iter_jsonl, similarity, write_json
 
 

@@ -6,16 +6,22 @@ chosen by RESONANCE_EVAL_STAGE (baked into the image so containers resolve it id
 Launch: RESONANCE_EVAL_STAGE={s2,s3} python -m modal run --detach \
         src/resonance/stages/qwen3_8_27b/modal_apps/evaluate_v5.py
 """
-import os
 import json
+import os
 import pathlib
 
 import modal
 
-
 from resonance.paths import run_dir
-from resonance.stages.qwen3_8_27b.config import (APP_EVAL, CONTAINER_ENV, PIPELINE_VOLUME, PROMPTS,
-                                                 RUN_ID, pipeline_root, with_code)
+from resonance.stages.qwen3_8_27b.config import (
+    APP_EVAL,
+    CONTAINER_ENV,
+    PIPELINE_VOLUME,
+    PROMPTS,
+    RUN_ID,
+    pipeline_root,
+    with_code,
+)
 
 ROOT = pipeline_root()
 STAGE = os.environ["RESONANCE_EVAL_STAGE"]
@@ -50,7 +56,7 @@ def paths():
 @app.function(image=image, volumes={"/pipeline": volume}, cpu=2, memory=8192, timeout=900)
 def initialize(test_raw: bytes, prompts_raw: bytes, labels_raw: bytes):
     import hashlib
-    import sys
+
     from resonance.stages.common import checkpoint, write_json
 
     volume.reload()
@@ -84,7 +90,7 @@ def initialize(test_raw: bytes, prompts_raw: bytes, labels_raw: bytes):
 def benchmark_shard(shard: int):
     import os
     import subprocess
-    import sys
+
     from resonance.stages.common import checkpoint
 
     volume.reload()
@@ -107,8 +113,8 @@ def benchmark_shard(shard: int):
 @app.function(image=image, volumes={"/pipeline": volume}, cpu=4, memory=16384,
               timeout=1800, retries=0)
 def evaluate():
-    import sys
     from collections import defaultdict
+
     from resonance.stages.common import iter_jsonl, write_json
 
     volume.reload()

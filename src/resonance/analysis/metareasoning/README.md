@@ -32,13 +32,18 @@ shows the whole change.
   starts at 0; unclosed reasoning stops at the first answer marker.
 - Classes: the `corrected` field of the relabel file (`frozen/relabel_classes.py`).
 
-Config format and definitions: `summary.py` docstring. A worked lineage config is
-`src/resonance/configs/paper/figures/metareasoning_summary.json`.
+Config format and definitions: `summary.py` docstring. The paper's config is
+`src/resonance/configs/paper/figures/kimi_no_id_paper.json`: Figs 4 and 6 read the
+per-reaction-seed runs, Fig 5 the 8-draw feedback run (`eight_rollouts_dir`).
 
 ## Verification against the recorded runs
 
 - Before machine paths were replaced, `frozen/` matched the hashes the generation run recorded
-  in its `protocol.json`; `verify --protocol` therefore applies only to the unanonymized copies.
+  in its `protocol.json`; `verify --protocol` therefore applies only to the original copies.
+  `verify` alone checks `frozen/` against `MANIFEST.json`.
+- `frozen/models.py` is the registry of an earlier lineage (Sonnet-teacher 8B, 30B Thinking);
+  the paper's checkpoints are the stage paths in `kimi_no_id_paper.json` and
+  `resonance.paper.regenerate`.
 - On the shared-seed outputs, `summary.py`'s `chemical_channel` reproduces the
   previous figure values exactly (n and accuracy, all 18 single-draw cells), and its
   plurality table matches `e1_by_class_k13579.json` exactly.

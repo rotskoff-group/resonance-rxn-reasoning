@@ -18,9 +18,9 @@ Conditions, kinds and wording live in conditions.py. Scoring is score_selfcorrec
 """
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
+from typing import Any, cast
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -151,7 +151,7 @@ def main():
     out_dir = Path(args.out_dir or (RUN / "outputs" / args.model_tag))
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    llm_kwargs = dict(model=spec.path, tensor_parallel_size=args.tp, dtype="bfloat16",
+    llm_kwargs: dict[str, Any] = dict(model=spec.path, tensor_parallel_size=args.tp, dtype="bfloat16",
                       max_model_len=args.max_model_len, gpu_memory_utilization=args.gpu_mem,
                       seed=args.seed, enable_prefix_caching=True)
     lora_req = None
@@ -165,7 +165,7 @@ def main():
     tok = llm.get_tokenizer()
 
     def chat(convs, sp):
-        kw = {"lora_request": lora_req} if lora_req else {}
+        kw: dict[str, Any] = {"lora_request": lora_req} if lora_req else {}
         return llm.chat(convs, sampling_params=sp, **kw)
 
     def per_reaction(sp, keep, base):
@@ -209,7 +209,7 @@ def main():
             keep, skipped = _split_budget(tok, base, convs, args)
             outs = chat([c for _, c in keep], per_reaction(standard, keep, base)) if keep else []
             rows = [(base[i][0], base[i][1], list(o.outputs), None)
-                    for (i, _), o in zip(keep, outs)]
+                    for (i, _), o in zip(keep, outs, strict=True)]
             rows += skipped
 
         elif kind == "turn1":
@@ -227,7 +227,7 @@ def main():
             keep, skipped = _split_budget(tok, base, convs, args)
             outs = chat([c for _, c in keep], per_reaction(sp, keep, base)) if keep else []
             rows = [(base[i][0], base[i][1], list(o.outputs), None)
-                    for (i, _), o in zip(keep, outs)]
+                    for (i, _), o in zip(keep, outs, strict=True)]
             rows += skipped
 
         elif kind == "verify":
@@ -266,8 +266,9 @@ def main():
                 for _, conv in keep:
                     ids = tok.apply_chat_template(conv, tokenize=True,
                                                   add_generation_prompt=True)
-                    prompts.append(TokensPrompt(prompt_token_ids=list(ids) + sfx_ids))
-                gkw = {"lora_request": lora_req} if lora_req else {}
+                    # tokenize=True returns the token ids
+                    prompts.append(TokensPrompt(prompt_token_ids=list(cast(list[int], ids)) + sfx_ids))
+                gkw: dict[str, Any] = {"lora_request": lora_req} if lora_req else {}
                 outs = llm.generate(prompts, sp, **gkw) if prompts else []
             else:
                 # let it reason, then read the verdict out of the text
@@ -275,7 +276,7 @@ def main():
                                     logprobs=20)
                 outs = chat([c for _, c in keep], sp) if keep else []
             rows = [(base[i][0], base[i][1], [o.outputs[0]], None)
-                    for (i, _), o in zip(keep, outs)]
+                    for (i, _), o in zip(keep, outs, strict=True)]
             rows += skipped
 
         rows.sort(key=lambda t: t[0]["eval_idx"])
@@ -366,13 +367,14 @@ def _tf_logprobs(out, tok):
     lp = (out.logprobs or [None])[0]
     if not lp:
         return None
-    acc = {"true": None, "false": None}
+    acc: dict[str, float | None] = {"true": None, "false": None}
     for tid, info in lp.items():
         s = (getattr(info, "decoded_token", None) or tok.decode([tid])).strip().lower()
         if s in acc:
             v = getattr(info, "logprob", None)
             if v is not None:
-                acc[s] = v if acc[s] is None else max(acc[s], v)
+                cur = acc[s]
+                acc[s] = v if cur is None else max(cur, v)
     t, f = acc["true"], acc["false"]
     if t is None and f is None:
         return {"p_true": None, "logprob_true": None, "logprob_false": None}

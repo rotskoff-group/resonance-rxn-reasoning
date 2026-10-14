@@ -5,11 +5,12 @@ prepare_stage.select (byte-identical to the ablation's reference_selection.selec
 CLI: python prepare.py --root ARM_STAGE_ROOT --model SOURCE_MODEL --stage {s2,s3}
 """
 import argparse
-from collections import Counter, defaultdict
 import json
-from pathlib import Path
 import random
-from resonance.stages.common import iter_jsonl, sha256, write_json
+from collections import Counter, defaultdict
+from pathlib import Path
+
+from resonance.stages.common import iter_jsonl, write_json
 from resonance.stages.qwen3_8_27b.prepare_stage import select
 
 

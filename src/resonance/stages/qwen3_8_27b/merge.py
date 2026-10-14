@@ -3,12 +3,16 @@
 Ported from run_dir('pipeline_27b')/scripts/merge.py.
 CLI: python merge.py STAGE_ROOT PARENT_MODEL
 """
-import json
 import sys
 from pathlib import Path
+
 import torch
 from peft import PeftModel
-from transformers import Qwen3_5ForConditionalGeneration, AutoTokenizer
+from transformers import (
+    AutoTokenizer,
+    Qwen3_5ForConditionalGeneration,  # ty: ignore[unresolved-import]  (transformers 5.x, Modal image)
+)
+
 from resonance.stages.common import checkpoint, write_json
 
 if __name__ == '__main__':

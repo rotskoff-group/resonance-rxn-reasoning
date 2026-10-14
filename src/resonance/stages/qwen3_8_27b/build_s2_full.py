@@ -8,6 +8,7 @@ import argparse
 import json
 from collections import Counter
 from pathlib import Path
+
 from resonance.stages.common import sha256
 
 
@@ -38,7 +39,9 @@ def main():
     coverage = Counter()
     for shard in (0, 1):
         path = root / f's2/rollouts/{shard}/rollouts.jsonl'
-        identity = json.loads((path.parent / 'identity.json').read_text()) if (path.parent / 'identity.json').exists() else json.loads((path.parent / 'COMPLETE.json').read_text())['identity']
+        identity = (json.loads((path.parent / 'identity.json').read_text())
+                    if (path.parent / 'identity.json').exists()
+                    else json.loads((path.parent / 'COMPLETE.json').read_text())['identity'])
         assert identity['data_sha256'] == inputs['source_sha256']
         files.append({'path': str(path), 'sha256': sha256(path)})
         with path.open() as handle:
@@ -84,9 +87,11 @@ def main():
     tokens = {k: sum(r[k + '_tokens'] for r in rows) for k in ('prompt', 'assistant')}
     manifest = {'name': out.name, 'examples': len(rows), 'unique_reactions': len(seen),
                 'policy': {'selection': 'all 40000 USPTO training reactions; no class upsampling',
-                           'correct_rollout_choice': 'all exact-correct, normally finished samples fitting 2048 total tokens',
+                           'correct_rollout_choice':
+                               'all exact-correct, normally finished samples fitting 2048 total tokens',
                            'zero_success_fallback': 'gold product, answer-only; same policy as S2 V2',
-                           'loss': 'assistant tokens only', 'duplicate_completion_policy': 'retain each sampled completion',
+                           'loss': 'assistant tokens only',
+                           'duplicate_completion_policy': 'retain each sampled completion',
                            'reaction_weighting': 'max(1, usable correct count)'},
                 'source_types': dict(Counter(r['source_type'] for r in rows)),
                 'class_counts': dict(sorted(Counter(r['reaction_class'] for r in rows).items())),
@@ -96,7 +101,9 @@ def main():
                 'inputs': {'original_inputs': inputs, 'rollouts': files}}
     assert len(rows) == sum(max(1, k) * v for k, v in coverage.items())
     out.mkdir()
-    features = load_from_disk(str(root / 'S2_V2_dataset/dataset')).features
+    v2 = load_from_disk(str(root / 'S2_V2_dataset/dataset'))
+    assert isinstance(v2, Dataset)
+    features = v2.features
     Dataset.from_list(rows, features=features).save_to_disk(str(out / 'dataset'))
     with (out / 'provenance.jsonl').open('w') as handle:
         for i, p in enumerate(provenance):

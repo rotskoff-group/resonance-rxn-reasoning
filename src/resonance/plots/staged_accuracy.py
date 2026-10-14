@@ -60,7 +60,7 @@ def plot(data):
         ax.axvline(d, color="#a6a6a6", linestyle=(0, (4, 3)), lw=1)
     ax.set_xticks(x, labels, fontsize=FS_BIG_TICK)
     ax.set_xlim(-0.6, len(values) - 0.4)
-    top = max(20, math.ceil(max(v + h for v, h in zip(values, highs)) / 20) * 20)
+    top = max(20, math.ceil(max(v + h for v, h in zip(values, highs, strict=True)) / 20) * 20)
     ax.set_ylim(0, top)
     ax.set_yticks(np.arange(0, top + 1, 20))
     ax.tick_params(axis="y", labelsize=FS_BIG_TICK)

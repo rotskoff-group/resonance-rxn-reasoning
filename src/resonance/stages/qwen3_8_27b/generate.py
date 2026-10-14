@@ -9,7 +9,8 @@ import json
 import os
 import time
 from pathlib import Path
-from resonance.stages.common import checkpoint, prediction, iter_jsonl, records, sha256, write_json
+
+from resonance.stages.common import checkpoint, iter_jsonl, prediction, records, sha256, write_json
 
 
 def main():
@@ -72,7 +73,7 @@ def main():
                 params = [SamplingParams(n=n, temperature=temperature, top_p=.95, top_k=20,
                           max_tokens=max_tokens, seed=42+r['row_idx']) for r in chunk]
                 generated = llm.generate(formatted, params, use_tqdm=False)
-                for row, prompt, result in zip(chunk, formatted, generated):
+                for row, prompt, result in zip(chunk, formatted, generated, strict=True):
                     completions = []
                     for gen in result.outputs:
                         ids = list(gen.token_ids)
@@ -81,6 +82,7 @@ def main():
                             'finish_reason': gen.finish_reason, 'prediction': pred,
                             'correct': pred is not None and pred == row['ground_truth']})
                     assert len(completions) == n
+                    assert result.prompt_token_ids is not None
                     record = {**row, 'prompt': prompt,
                               'prompt_ids': list(result.prompt_token_ids), 'completions': completions}
                     f.write(json.dumps(record) + '\n')

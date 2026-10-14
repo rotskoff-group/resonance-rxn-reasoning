@@ -14,12 +14,9 @@ from pathlib import Path
 from types import ModuleType
 
 from . import (
-    class_progression,
     feedback_delta,
     intervention_scatter,
     plurality,
-    stage_ablation,
-    stage_waterfall,
     staged_accuracy,
     style,
 )
@@ -35,13 +32,9 @@ class Figure:
 
 FIGURES = [
     Figure("staged_accuracy", staged_accuracy, "Stage accuracy vs frontier models"),
-    Figure("class_progression", class_progression, "Three-panel per-family progression"),
     Figure("length_prompts", intervention_scatter, "Commit / consider / think more"),
-    Figure("counterfactual", intervention_scatter, "Told correct / told wrong feedback"),
     Figure("feedback_delta", feedback_delta, "Accuracy change per feedback condition (dots)"),
     Figure("plurality", plurality, "Plurality@k by reaction class"),
-    Figure("stage_ablation", stage_ablation, "Per-family stage-ablation heatmap"),
-    Figure("stage_waterfall", stage_waterfall, "3-D waterfall: accuracy by stage and family"),
 ]
 
 

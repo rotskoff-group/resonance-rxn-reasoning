@@ -12,10 +12,8 @@ import asyncio
 import random
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from contextlib import nullcontext
 from typing import Any
 
-import torch
 from loguru import logger
 from openai import AsyncOpenAI, RateLimitError
 from vllm import LLM, SamplingParams
@@ -125,14 +123,12 @@ class APIBackend(InferenceBackend):
         api_base: str | None = None,
         request_kwargs: dict[str, Any] | None = None,
         concurrency: int = 32,
-        include_reasoning: bool = True,
     ):
         self.model_name = model_name
         self.api_key = api_key
         self.api_base = api_base
         self.request_kwargs = request_kwargs or {}
         self.concurrency = concurrency
-        self.include_reasoning = include_reasoning
 
     async def _call_one(
         self,
@@ -153,8 +149,6 @@ class APIBackend(InferenceBackend):
                     )
                     msg = completion.choices[0].message
                     content = msg.content or ""
-                    if not self.include_reasoning:
-                        return content
                     # Thinking models split their output: the chain of thought arrives in
                     # `reasoning_content` (some gateways call it `reasoning`) and only the
                     # final answer is in `content`. Returning content alone DISCARDED the
@@ -228,145 +222,3 @@ class APIBackend(InferenceBackend):
         save_callback: Callable[[int, str], None] | None = None,
     ) -> list[str]:
         return asyncio.run(self._generate_all(messages_list, save_callback))
-
-
-class SharedModelBackend(InferenceBackend):
-    """Judge inference on the shared policy model with LoRA adapters optionally disabled.
-
-    Avoids loading a second copy of the base model. The policy model (a PeftModel)
-    is shared across training and reward computation. By default adapters are
-    disabled so the judge runs on the frozen base weights, giving stable reward
-    signals that are independent of the adapters being trained.
-
-    Usage
-    -----
-    1. Construct with ``SharedModelBackend(sampling_kwargs={...}, use_lora=False)``.
-    2. After ``GRPOTrainer`` is initialised, call ``backend.bind(trainer.model, tokenizer)``.
-    3. ``generate()`` will then run on the shared model.
-
-    Notes
-    -----
-    - Not compatible with FSDP-sharded models; use single-GPU or DDP.
-    - The full completion batch is processed in one ``model.generate()`` call;
-      reduce ``num_generations`` in GRPOConfig if you hit OOM.
-
-    Args:
-        sampling_kwargs: Forwarded verbatim to ``model.generate()``
-                         (e.g. max_new_tokens, temperature, do_sample).
-        use_lora:        If False (default), adapters are disabled during generation
-                         so the model acts as the base (judge). If True, adapters
-                         remain active (critic mode).
-    """
-
-    def __init__(
-        self,
-        sampling_kwargs: dict[str, Any] | None = None,
-        use_lora: bool = False,
-    ):
-        self._model = None
-        self._tokenizer = None
-        self._sampling_kwargs: dict[str, Any] = sampling_kwargs or {
-            "max_new_tokens": 512
-        }
-        self._use_lora = use_lora
-
-    def bind(self, model: Any, tokenizer: Any) -> None:
-        """Attach the shared policy model and tokenizer after trainer initialisation."""
-        self._model = model
-        self._tokenizer = tokenizer
-
-    @property
-    def is_bound(self) -> bool:
-        return self._model is not None and self._tokenizer is not None
-
-    def generate(
-        self,
-        messages_list: list[list[dict[str, str]]],
-        save_callback: Callable[[int, str], None] | None = None,
-    ) -> list[str]:
-        if not self.is_bound:
-            raise RuntimeError(
-                "SharedModelBackend has no model bound. "
-                "Call backend.bind(trainer.model, tokenizer) after GRPOTrainer init."
-            )
-
-        tokenizer = self._tokenizer
-        assert tokenizer is not None
-
-        # gen_model: the outermost model (preserves FSDP/DDP collective ops in generate())
-        gen_model = self._model
-        assert gen_model is not None
-
-        # adapter_model: the inner PeftModel that owns disable_adapters(); we peel
-        # only wrapper layers (DDP, FSDP) that don't have disable_adapters themselves.
-        adapter_model = gen_model
-        while not hasattr(adapter_model, "disable_adapters") and hasattr(
-            adapter_model, "module"
-        ):
-            adapter_model = adapter_model.module
-
-        # Tokenize each message list and left-pad to a common length
-        pad_id = tokenizer.pad_token_id or tokenizer.eos_token_id
-        encodings = [
-            tokenizer.apply_chat_template(
-                msgs, tokenize=True, add_generation_prompt=True, return_tensors="pt"
-            )
-            for msgs in messages_list
-        ]
-        max_len = max(e.shape[1] for e in encodings)
-        padded_ids, attn_masks = [], []
-        for e in encodings:
-            pad_len = max_len - e.shape[1]
-            if pad_len:
-                pad = e.new_full((1, pad_len), pad_id)
-                padded_ids.append(torch.cat([pad, e], dim=1))
-                attn_masks.append(
-                    torch.cat(
-                        [
-                            torch.zeros(1, pad_len, dtype=torch.long),
-                            torch.ones(1, e.shape[1], dtype=torch.long),
-                        ],
-                        dim=1,
-                    )
-                )
-            else:
-                padded_ids.append(e)
-                attn_masks.append(torch.ones(1, max_len, dtype=torch.long))
-
-        device = next(adapter_model.parameters()).device
-        input_ids = torch.cat(padded_ids).to(device)
-        attention_mask = torch.cat(attn_masks).to(device)
-
-        gen_kwargs = dict(self._sampling_kwargs)
-        gen_kwargs.setdefault("pad_token_id", pad_id)
-
-        was_training = gen_model.training
-        gen_model.eval()
-
-        # Disable adapters on the inner PeftModel for judge (base-model) inference.
-        # generate() still goes through gen_model so FSDP collective ops are preserved.
-        disable_ctx = (
-            adapter_model.disable_adapters()
-            if (not self._use_lora and hasattr(adapter_model, "disable_adapters"))
-            else nullcontext()
-        )
-        try:
-            with torch.no_grad(), disable_ctx:
-                output_ids = gen_model.generate(
-                    input_ids=input_ids,
-                    attention_mask=attention_mask,
-                    **gen_kwargs,
-                )
-        finally:
-            if was_training:
-                gen_model.train()
-
-        prompt_len = input_ids.shape[1]
-        responses = []
-        for i, seq in enumerate(output_ids):
-            text = tokenizer.decode(seq[prompt_len:], skip_special_tokens=True)
-            responses.append(text)
-            if save_callback:
-                save_callback(i, text)
-
-        return responses

@@ -1,19 +1,19 @@
 # Configuration for SFT training
 
 # Model configuration
-model_name: gpt2
+model_name: Qwen/Qwen3-8B
 model_kwargs:
   dtype: bfloat16
   device_map: auto
 
 # Tokenizer configuration
-tokenizer_name: gpt2
+tokenizer_name: Qwen/Qwen3-8B
 tokenizer_kwargs:
   trust_remote_code: false
   use_fast: true
 
 # Dataset configuration
-# Single path or list of paths to precomputed datasets from precompute.py.
+# Single path or list of paths to datasets saved with `datasets.save_to_disk`.
 # Multiple shards are concatenated automatically.
 # dataset_path:
 #   - /path/to/shard1

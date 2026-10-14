@@ -32,12 +32,9 @@ python -m resonance.plots.run --data-dir /tmp/plot_examples --out-dir /tmp/plot_
 | File | Module | Figure |
 |---|---|---|
 | `staged_accuracy.json` | `staged_accuracy` | Stage accuracy with 95% Wilson intervals next to reference models |
-| `class_progression.json` | `class_progression` | (a) training reactions per family, (b) student − teacher accuracy, (c) family trajectories |
 | `length_prompts.json` | `intervention_scatter` | Δ accuracy vs reasoning tokens for commit / consider / think more |
-| `counterfactual.json` | `intervention_scatter` | Same form for told correct / told wrong feedback |
 | `feedback_delta.json` | `feedback_delta` | Accuracy change per condition as labelled dots (±SE optional) |
 | `plurality.json` | `plurality` | Plurality@k accuracy by reaction class |
-| `stage_ablation.json` | `stage_ablation` | (a) base accuracy, (b) gain over base per path, (c) paired stage increments |
 
 The exact schema, with an example, is in each module's docstring. Common rules:
 
@@ -45,23 +42,16 @@ The exact schema, with an example, is in each module's docstring. Common rules:
   `n` (or `n_test`). Accuracies are computed in the module.
 - **Order is display order.** Lists of stages, families, conditions and paths
   plot in the order given.
-- **Missing results are allowed where noted.** In `stage_ablation`, a path key
-  absent from a family's `correct` renders as "–", so pending ablations stay in
-  the layout.
 - **Axis labels, ticks and `figsize`** can be set in the input where the module
   docstring lists them, so paper-specific wording lives with the data.
-- **Colours** default to the house palette in `style.py`. Families are coloured
-  by name (`style.FAMILY_COLORS`); any series, bar or condition may set `color`
-  (and `marker` for scatter conditions).
+- **Colours** default to the house palette in `style.py`; any series, bar or
+  condition may set `color` (and `marker` for scatter conditions).
 
 ## Statistics
 
 - `staged_accuracy`: 95% Wilson score interval per bar.
 - `intervention_scatter` / `feedback_delta`: error bars are drawn only from supplied
   `delta_se_pp` / `tokens_se`; nothing is estimated here.
-- `stage_ablation` (c): increment = (second-only − first-only correct) / n from
-  paired per-reaction outcomes. `*` marks exact two-sided McNemar p < `alpha`
-  after Holm correction over all cells of the panel.
 
 ## Adding a figure
 

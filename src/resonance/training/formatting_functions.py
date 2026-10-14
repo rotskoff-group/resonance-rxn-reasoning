@@ -4,10 +4,6 @@ Formatting functions for converting dataset samples to model input format.
 Data preparation:
   prepare_data_samples  — loads raw data through parser+prompt into sample dicts
 
-Training functions (return a single string):
-  sft_formatting_func   — system prompt + task prompt for SFT
-  cpt_formatting_func   — task prompt only for continued pre-training
-
 Inference functions (return a chat message list):
   build_messages        — system + user messages for chat-completion APIs
 """
@@ -29,12 +25,12 @@ def prepare_data_samples(
     system_prompt_kwargs: dict[str, Any] | None = None,
     task_template_kwargs: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
-    """Build a list of sample dicts from raw data, mirroring GenericDataset.__getitem__.
+    """Build a list of sample dicts from raw data.
 
     Args:
         parser: Parser instance for parsing reactions.
         prompt: Prompt instance for generating prompts.
-        representation: Representation type (e.g. 'smiles', 'atom_mapped', 'iupac').
+        representation: Representation type (only 'smiles' is supported).
         raw_data_list: Pre-loaded list of raw reaction data.
         system_prompt_kwargs: Keyword arguments forwarded to prompt.get_system_prompt.
         task_template_kwargs: Keyword arguments forwarded to prompt.get_task_template.
@@ -66,33 +62,8 @@ def prepare_data_samples(
     return samples
 
 
-def sft_formatting_func(example: dict[str, Any]) -> str:
-    """Convert GenericDataset sample to text for SFT training.
-
-    Args:
-        example: Dictionary containing 'system_prompt' and 'task_prompt' keys
-
-    Returns:
-        Formatted text combining system prompt and task prompt
-    """
-    return f"{example['system_prompt']}\n\n{example['task_prompt']}"
-
-
-def cpt_formatting_func(example: dict[str, Any]) -> str:
-    """Convert GenericDataset sample to text for CPT.
-
-    Args:
-        example: Dictionary containing 'system_prompt' key
-
-    Returns:
-        Fromatted text using only the system prompt for CPT
-    """
-    return f"{example['task_prompt']}"
-
-
-def build_messages(
-    sample: dict[str, Any], disable_thinking: bool = True
-) -> list[dict[str, str]]:
+def build_messages(sample: dict[str, Any]) -> list[dict[str, str]]:
+    """System (if any) and user messages for one sample."""
     messages: list[dict[str, str]] = []
     if sample["system_prompt"]:
         messages.append({"role": "system", "content": sample["system_prompt"]})

@@ -30,10 +30,6 @@ Repository = "https://github.com/rotskoff-group/resonance-rxn-reasoning"
 Dataset = "https://huggingface.co/datasets/anaghaa/resonance"
 
 [project.optional-dependencies]
-mapping = [
-    "rxnmapper>=0.4.2",
-]
-
 benchmark = [
     "datasets>=4.7.0",
     "transformers>=4.56.0",
@@ -61,7 +57,7 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.setuptools.package-data]
-resonance = ["configs/**/*.yaml", "configs/**/*.json", "data/datasets/*.json", "pipelines/traces/*.json", "release/*.txt"]
+resonance = ["configs/**/*.yaml", "configs/**/*.json", "pipelines/traces/*.json", "release/*.txt"]
 
 [tool.uv]
 environments = ["sys_platform == 'linux'"]

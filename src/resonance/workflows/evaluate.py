@@ -2,8 +2,8 @@
 Evaluation script for benchmark output.
 
 Reads a JSONL file produced by benchmark.py, extracts the model's answer
-from the \\boxed{} tag in each response, and compares it against the
-ground-truth `answer` field.
+from each response with the task's parser in ``TASK_PARSERS``, and compares
+it against the ground-truth `answer` field.
 
 Run with Hydra (mirrors benchmark.py):
   python -m resonance.workflows.evaluate results_path=/path/to/results.jsonl
@@ -24,52 +24,6 @@ try:
     _sklearn_available = True
 except ImportError:
     _sklearn_available = False
-
-
-def extract_boxed(text: str) -> str | None:
-    """Extract the content of the last \\boxed{} in text, handling nested braces."""
-    results = []
-    i = 0
-    marker = r"\boxed{"
-    while True:
-        pos = text.find(marker, i)
-        if pos == -1:
-            break
-        start = pos + len(marker)
-        depth = 1
-        j = start
-        while j < len(text) and depth > 0:
-            if text[j] == "{":
-                depth += 1
-            elif text[j] == "}":
-                depth -= 1
-            j += 1
-        if depth == 0:
-            results.append(text[start : j - 1])
-        i = pos + 1
-    if not results:
-        return None
-    return results[-1].strip()
-
-
-def answers_match(
-    predicted: str, ground_truth: str, answer_type: str | None
-) -> bool:
-    """Return True if predicted matches ground_truth.
-
-    For numeric answer types a float comparison with a small relative tolerance
-    is used. All other types fall back to case-insensitive string equality.
-    """
-    if answer_type in ("numeric", "float", "int", "integer", "number"):
-        try:
-            pred_val = float(predicted.replace(",", ""))
-            true_val = float(str(ground_truth).replace(",", ""))
-            if true_val == 0:
-                return abs(pred_val) < 1e-6
-            return abs(pred_val - true_val) / abs(true_val) < 0.01
-        except ValueError:
-            return predicted.lower() == str(ground_truth).lower()
-    return predicted.lower() == str(ground_truth).strip().lower()
 
 
 def evaluate(results_path: str, question_type: str | None = None) -> dict:
@@ -112,12 +66,10 @@ def evaluate(results_path: str, question_type: str | None = None) -> dict:
         qt = record.get("question_type", "unknown")
         at = record.get("answer_type")
 
-        if qt in TASK_PARSERS:
-            extract_fn, match_fn = TASK_PARSERS[qt]
-            predicted = extract_fn(record.get("response", ""))
-        else:
-            extract_fn, match_fn = extract_boxed, answers_match
-            predicted = extract_fn(record.get("response", ""))
+        if qt not in TASK_PARSERS:
+            raise ValueError(f"No parser for question_type {qt!r}; known: {sorted(TASK_PARSERS)}")
+        extract_fn, match_fn = TASK_PARSERS[qt]
+        predicted = extract_fn(record.get("response", ""))
 
         if qt not in per_type:
             per_type[qt] = {"total": 0, "answered": 0, "correct": 0}
@@ -148,39 +100,12 @@ def evaluate(results_path: str, question_type: str | None = None) -> dict:
             preds = [p for p, _ in pairs_per_type[qt]]
             trues = [t for _, t in pairs_per_type[qt]]
             unique_true = set(trues)
-            unique_pred = set(preds)
 
-            yn_set = {"yes", "no"}
-            if (
-                unique_true - {_NO_ANSWER} <= yn_set
-                and unique_pred - {_NO_ANSWER} <= yn_set
-            ):
-                filtered = [
-                    (t, p)
-                    for t, p in zip(trues, preds, strict=True)
-                    if t != _NO_ANSWER and p != _NO_ANSWER
-                ]
-                if filtered:
-                    f_trues, f_preds = zip(*filtered, strict=True)
-                else:
-                    f_trues, f_preds = [], []
-                avg = "binary"
-                pos_label = "yes"
-                p, r, f, _ = precision_recall_fscore_support(
-                    list(f_trues),
-                    list(f_preds),
-                    average=avg,
-                    pos_label=pos_label,
-                    zero_division=0,
-                    labels=["yes", "no"],
-                )
-            else:
-                # Macro F1 for multi-class (integer counts, strings, etc.)
-                avg = "macro"
-                labels = sorted(unique_true)
-                p, r, f, _ = precision_recall_fscore_support(
-                    trues, preds, average=avg, zero_division=0, labels=labels
-                )
+            # Macro F1 over the ground-truth labels
+            labels = sorted(unique_true)
+            p, r, f, _ = precision_recall_fscore_support(
+                trues, preds, average="macro", zero_division=0, labels=labels
+            )
             stats["precision"] = float(p)
             stats["recall"] = float(r)
             stats["f1"] = float(f)

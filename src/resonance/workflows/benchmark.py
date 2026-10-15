@@ -4,7 +4,7 @@ Benchmark evaluation script.
 This script:
 1. Instantiates a parser and prompt, loads data
 2. Prepares chat messages for each sample via BenchmarkRunner
-3. Dispatches inference to a pluggable InferenceBackend (see utils/inference_backends.py)
+3. Dispatches inference to a pluggable InferenceBackend (see inference/backends.py)
 4. Saves prompts, responses, and ground-truth answers to a JSONL file
 """
 
@@ -34,7 +34,7 @@ class BenchmarkRunner:
         parser: Instantiated Parser used to load and parse data.
         prompt: Instantiated Prompt used to generate system and task prompts.
         backend: InferenceBackend used for model inference.
-        representation: Molecular representation type (e.g. "smiles", "iupac", "atom_mapped").
+        representation: Molecular representation type (only "smiles" is supported).
         system_prompt_kwargs: Extra kwargs forwarded to prompt.get_system_prompt.
         task_template_kwargs: Extra kwargs forwarded to prompt.get_task_template.
         parser_kwargs: Extra kwargs forwarded to parser.load_reactions.

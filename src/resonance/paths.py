@@ -4,13 +4,11 @@ Every stage script resolves its directories through `run_dir(key)`, never throug
 literal path, so moving the data (or anonymizing it) means editing this file only.
 
     RESONANCE_DATA_ROOT   root holding every run directory (default: DATA_ROOT below)
-    RESONANCE_HF_CACHE    Hugging Face cache directory (default: next to DATA_ROOT)
 """
 import os
 from pathlib import Path
 
 DATA_ROOT = Path(os.environ.get("RESONANCE_DATA_ROOT", "data"))
-HF_CACHE = Path(os.environ.get("RESONANCE_HF_CACHE", DATA_ROOT.parent / "hf_cache"))
 
 # key -> directory name under DATA_ROOT.
 RUN_DIRS = {

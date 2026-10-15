@@ -1,9 +1,8 @@
 """Accuracy change vs reasoning length for prompt interventions, one panel per stage.
 
-Used for both metareasoning figures: reasoning-length prompts (commit /
-consider / think more) and counterfactual feedback (told correct / told wrong).
+Used for the reasoning-length prompts (commit / consider / think more).
 
-Input (``length_prompts.json`` or ``counterfactual.json``)::
+Input (``length_prompts.json``)::
 
     {"stages": ["S1", "S2", "S3"],
      "baseline_label": "Neutral",              # optional; titled "S1 · Neutral: 30.9%"

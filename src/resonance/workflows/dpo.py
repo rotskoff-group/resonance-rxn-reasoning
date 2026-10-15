@@ -25,7 +25,7 @@ from resonance.data.parsers.sft.dpo_pairs_parser import DPOPairsParser
 from resonance.utils import convert_dtype_in_kwargs
 
 
-@hydra.main(version_base=None, config_path="../configs", config_name="dpo")
+@hydra.main(version_base=None, config_path="../configs/paper/qwen3_8b", config_name="s3_dpo")
 def main(cfg: DictConfig) -> None:
     start_time = time.time()
 

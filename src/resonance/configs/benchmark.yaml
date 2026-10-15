@@ -1,11 +1,11 @@
 # Configuration for benchmark evaluation workflow
 
 # Parser configuration
-parser_name: MolPropertiesParser
+parser_name: ForwardRxnParser
 parser_kwargs: {}
 
 # Prompt configuration
-prompt_name: MolPropertiesPrompt
+prompt_name: ForwardRxnPrompt
 system_prompt_kwargs: {}
 task_template_kwargs: {}
 

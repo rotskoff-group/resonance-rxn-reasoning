@@ -1,6 +1,6 @@
 """Parser for pre-mined DPO (chosen, rejected) pairs.
 
-Reads dpo_pairs.jsonl produced by sonnet_dpo_pairs/scripts/mine_dpo_pairs.py.
+Reads a dpo_pairs.jsonl file, e.g. the released S3 DPO pairs (docs/DATA.md).
 Each record: {prompt: list[dict], chosen: list[dict], rejected: list[dict]}
 """
 

@@ -1,7 +1,8 @@
 """
 Supervised Fine-Tuning (SFT) training script using HuggingFace Transformers and TRL.
 
-This script loads a precomputed dataset (created by precompute.py) and trains a model.
+This script loads a dataset saved with `datasets.save_to_disk` (e.g. the released S1 and S2
+SFT datasets, see docs/DATA.md) and trains a model.
 """
 
 import math

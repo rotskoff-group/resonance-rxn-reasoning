@@ -82,7 +82,7 @@ Qwen3.8-27B is a vision-language checkpoint, used text-only. To serve it with vL
 | Variable | Used for |
 |---|---|
 | `RESONANCE_DATA_ROOT` | Root of every run directory (`resonance.paths`) |
-| `RESONANCE_HF_CACHE` | Hugging Face cache directory |
+| `HF_HOME`, `VLLM_CACHE_ROOT` | Model-weight and vLLM compile caches (see the README) |
 | `KIMI_MODAL_API_BASE`, `MODAL_KEY`, `MODAL_SECRET`, `MOONSHOT_API_KEY`, `OPENROUTER_API_KEY` | Kimi K3 endpoints for trace generation (`pipelines/traces/endpoints.py`; see `.env.example`) |
 
 ## Recorded quirks

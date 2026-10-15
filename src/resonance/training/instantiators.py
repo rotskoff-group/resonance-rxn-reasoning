@@ -14,7 +14,6 @@ from transformers import (
 from resonance.inference.backends import (
     APIBackend,
     InferenceBackend,
-    SharedModelBackend,
     VLLMBackend,
 )
 
@@ -112,12 +111,6 @@ def instantiate_backend(cfg: DictConfig) -> InferenceBackend:
             concurrency=cfg.get("concurrency", 32),
         )
 
-    if mode == "shared":
-        return SharedModelBackend(
-            sampling_kwargs=_as_dict("sampling_kwargs"),
-            use_lora=bool(cfg.get("use_lora", False)),
-        )
-
     raise ValueError(
-        f"Unknown inference mode '{mode}'. Must be one of: 'vllm', 'api', 'shared'."
+        f"Unknown inference mode '{mode}'. Must be one of: 'vllm', 'api'."
     )
